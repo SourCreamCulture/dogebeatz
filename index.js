@@ -1,12 +1,13 @@
+const config = require("/config.json");
 const Moonstone = require("moonstone-wrapper");
 const ytdl = require("ytdl-core-discord");
-const bot = Moonstone(apitoken);
+const bot = Moonstone(config.apitoken);
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 const axios = require('axios');
 const Constants = Moonstone.Constants;
 
-const prefix = '-';
+const prefix = config.prefix;
 
 const ownerid = 'a307faa0-c573-4fd8-8229-6194fab201e0';
 
