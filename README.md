@@ -8,3 +8,12 @@ A Music bot I am creating for dogehouse!
 Contributors are welcome!
 
 For ideas of what to add to the bot create an issue.
+
+### Features to be added:
+
+- [ ] queue
+- [ ] nowplaying
+- [ ] skip
+- [ ] save playlists
+- [ ] dj mode
+- [ ] command handler
