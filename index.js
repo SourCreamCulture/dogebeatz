@@ -312,11 +312,11 @@ bot.on("newChatMsg", async (msg) => {
 });
 
 const playFromUrl = async (room, url) => {
-	if (timer) {
+	if (!!timer) {
 		timer.reset();
-		timer.pause();
 		timer = null;
 	}
+	console
 	if (!room.selfUser.isSpeaker) {
 		await room.sendChatMessage(
 			"I need to be a speaker in order to play music."
@@ -393,7 +393,7 @@ function startTimer(seconds, oncomplete) {
 		}
 		return now;
 	};
-	obj.reset = function () { ms = seconds * 1000; }
+	obj.reset = function () { ms = seconds * 1000; oncomplete = null }
 	obj.resume();
 	return obj;
 }
