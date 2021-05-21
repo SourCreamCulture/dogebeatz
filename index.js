@@ -359,7 +359,7 @@ const playFromUrl = async (room, url) => {
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
 		if (!queue.length) {
 			queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' }); playFromUrl(room, querey[0].url);
-			await room.sendChatMessage("Playing Lofi songs");
+			room.sendChatMessage("Playing Lofi songs");
 		}
 		else nextInQueue(room)
 	})
