@@ -75,6 +75,7 @@ const commandList = bot.buildChatMessage((b) =>
 		.text(`|| ${prefix}play <url | query> - Play a song from youtube.`)
 		.text(`|| ${prefix}add <url | query> - Add a song to queue.`)
 		.text(`|| ${prefix}skip - Skip the current song in queue.`)
+		.text(`|| ${prefix}current - Title of the currently playing song.`)
 		.text(`|| ${prefix}queue - List songs in queue.`)
 		.text(`|| ${prefix}pause - Pause the player.`)
 		.text(`|| ${prefix}resume - Resume the player.`)
@@ -227,11 +228,27 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.includes(`${prefix}skip`)) {
-		if (!querey.length)
+		if (querey.length <= 1)
 			await msg.room.sendChatMessage("Nothing in queue to skip to!");
-		else return await msg.room.sendChatMessage("Skipping to the next song in queue...");;
+		else {
+			await msg.room.sendChatMessage("Skipping to the next song in queue...");
+			nextInQueue(msg.room);
+			msg.room.sendChatMessage("Playing " + queue[0].title);
+		}
 	};
-	if (msg.content.includes(`${prefix}add`)) {
+
+	if (msg.content.includes(`${prefix}current`)) {
+		if (!querey.length)
+			await msg.room.sendChatMessage("Nothing in queue");
+		else {
+			let title = queue[0].title + `(${queue[0].url})`;
+			if (msg.room.audioConnection.player.dispatcher.paused)
+				title = '[paused] ' + title;
+			await msg.room.sendChatMessage(title);
+		}
+	};
+
+	if (msg.content.includes(`${ prefix } add`)) {
 		if (msg.user.id === config.trusted) return
 
 		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
@@ -253,7 +270,7 @@ bot.on("newChatMsg", async (msg) => {
 			var songInfo = searched.videos[0]
 			var url = songInfo.url
 			await msg.room.sendChatMessage((b) =>
-				b.text(`Added ${songInfo.title}`).url(url).text("to queue.")
+				b.text(`Added ${ songInfo.title } `).url(url).text("to queue.")
 			);
 
 			addToQueue(url, songInfo.title);
@@ -263,21 +280,21 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 
-	if (msg.content === (`${prefix}help`)) {
+	if (msg.content === (`${ prefix } help`)) {
 		return await msg.user.sendWhisper(commandList);
 	};
-	if (msg.content === (`${prefix}queue`)) {
+	if (msg.content === (`${ prefix } queue`)) {
 		let queueList = [{ type: 'text', value: 'Queue:' }];
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
-			queueList.push({ type: 'text', value: `${index}: ${song.title} ` });
+			queueList.push({ type: 'text', value: `${ index }: ${ song.title } ` });
 			if (querey.length != index + 1)
 				queueList.push({ type: 'text', value: `|| ` });
 		}
 
 		return await msg.user.sendWhisper(queueList);
 	};
-	if (msg.content.includes(`${prefix}pause`)) {
+	if (msg.content.includes(`${ prefix } pause`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
@@ -286,7 +303,7 @@ bot.on("newChatMsg", async (msg) => {
 		msg.room.audioConnection.player.dispatcher.pause();
 		return
 	};
-	if (msg.content.includes(`${prefix}resume`)) {
+	if (msg.content.includes(`${ prefix } resume`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
@@ -298,7 +315,7 @@ bot.on("newChatMsg", async (msg) => {
 		}
 		return
 	};
-	if (msg.content.includes(`${prefix}volume`)) {
+	if (msg.content.includes(`${ prefix } volume`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
@@ -311,10 +328,10 @@ bot.on("newChatMsg", async (msg) => {
 		msg.room.audioConnection.player.dispatcher.setVolume(volume); // Set music volume
 		return
 	};
-	if (msg.content.includes(`${prefix}myid`)) {
-		return msg.room.sendChatMessage(`Your id is ${msg.user.id}`);
+	if (msg.content.includes(`${ prefix } myid`)) {
+		return msg.room.sendChatMessage(`Your id is ${ msg.user.id } `);
 	};
-	if (msg.content.startsWith(`${prefix}`)) {
+	if (msg.content.startsWith(`${ prefix } `)) {
 		return await msg.room.sendChatMessage("Unknown command.");
 	};
 
