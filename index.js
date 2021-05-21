@@ -308,7 +308,6 @@ bot.on("newChatMsg", async (msg) => {
 const playFromUrl = async (room, url) => {
 	if (timer) {
 		timer.pause();
-		timer = null;
 	}
 	if (!room.selfUser.isSpeaker) {
 		await room.sendChatMessage(
