@@ -267,11 +267,15 @@ bot.on("newChatMsg", async (msg) => {
 		return await msg.user.sendWhisper(commandList);
 	};
 	if (msg.content === (`${prefix}queue`)) {
-		let queueList = "Music Queue:<br>";
+		let queueList = "Music Queue:";
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
-			queueList += `${index}. ${song.title}<br>`;
+			queueList += `${index}. ${song.title}`;
 		}
+		let a = bot.buildChatMessage((b) =>
+			b.text('test')
+		);
+		console.log(a)
 		return await msg.user.sendWhisper(queueList);
 	};
 	if (msg.content.includes(`${prefix}pause`)) {
