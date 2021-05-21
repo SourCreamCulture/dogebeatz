@@ -11,5 +11,6 @@ module.exports = {
 	"ownerId": "06442a55-761c-4391-94cd-47f2ead4ca16",
 	"trusted": [
 		"06442a55-761c-4391-94cd-47f2ead4ca16"
-	]
+	],
+	"dbId": ""
 }
