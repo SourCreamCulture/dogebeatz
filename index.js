@@ -361,7 +361,7 @@ const updateDb = () => {
 
 const nextInQueue = (room) => {
 	queue.shift();
-	if (!queue.length) queue = [];
+	if (!queue) queue = [];
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
 		return true;
