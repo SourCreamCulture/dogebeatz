@@ -224,7 +224,10 @@ bot.on("newChatMsg", async (msg) => {
 		}
 		return
 	};
-
+	if (msg.content.includes(`${prefix}skip`)) {
+		if (nextInQueue() == false)
+			msg.room.sendChatMessage("Nothing to skip!");
+	};
 	if (msg.content.includes(`${prefix}add`)) {
 		if (msg.user.id === config.trusted) return
 
@@ -350,7 +353,6 @@ const addToQueue = (songurl) => {
 	updateDb();
 }
 
-
 const updateDb = () => {
 	axios.post(dbURL + config.dbId, JSON.stringify(queue))
 		.catch((error) => {
@@ -360,7 +362,7 @@ const updateDb = () => {
 
 const nextInQueue = (room) => {
 	queue.shift();
-	console.log({ queue })
+	console.log(Date,now, { queue })
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
 		return true;
