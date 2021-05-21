@@ -43,7 +43,6 @@ bot.on("ready", async (user) => {
 				privacy: "public",
 			});
 	await bot.joinRoom(room); // Join room
-	//playFromUrl(room, queue[0].url);
 });
 
 // Send a message when first joining a room.
@@ -307,7 +306,7 @@ bot.on("newChatMsg", async (msg) => {
 		if (!isPlayingMusic(msg.room)) {
 			if (queue.length) {
 				await msg.room.sendChatMessage(b => b.text('Playing ' + queue[0].title).url(queue[0].url).text('...'));
-				return playFromUrl(msg.room, queue[0].url);
+				return await playFromUrl(msg.room, queue[0].url);
 			}
 			return msg.room.sendChatMessage("Not playing anything.");
 		}
