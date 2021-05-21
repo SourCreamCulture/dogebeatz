@@ -7,7 +7,6 @@ const yts = require("yt-search");
 const fetch = require("node-fetch");
 const axios = require('axios');
 const Constants = Moonstone.Constants;
-const utils = require('./utils.js')
 const dbURL = 'https://textdb.dev/api/data/';
 
 var prefix = config.prefix;
