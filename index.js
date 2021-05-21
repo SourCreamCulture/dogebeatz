@@ -226,8 +226,9 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.includes(`${prefix}skip`)) {
-		if (!nextInQueue(msg.room))
-			msg.room.sendChatMessage("Nothing in queue to skip to!");
+		if (!nextInQueue(msg.room)) 
+			await msg.room.sendChatMessage("Nothing in queue to skip to!");
+		else return await msg.room.sendChatMessage("Skipping to the next song in queue...");;
 	};
 	if (msg.content.includes(`${prefix}add`)) {
 		if (msg.user.id === config.trusted) return
