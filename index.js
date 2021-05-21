@@ -45,8 +45,8 @@ bot.on('ready', async (user) => {
     foundRooms.length > 0
       ? foundRooms[0]
       : await bot.createRoom({
-          name: '[BOT TESTING]',
-          description: 'testing',
+          name: 'Music to Chill to',
+          description: 'Powered by Code and Made by @SourCream',
           privacy: 'public',
         });
   await bot.joinRoom(room); // Join room
