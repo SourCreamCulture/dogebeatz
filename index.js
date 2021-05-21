@@ -212,7 +212,7 @@ bot.on("newChatMsg", async (msg) => {
 			var searchString = args.join(" ");
 			if (!searchString) {
 				if (!queue.length) return await msg.room.sendChatMessage('You didnt provide a song to play!')
-				room.sendChatMessage(b => b.text('Playing' + queue[0].title).url(queue[0].url).text('...'));
+				await msg.room.sendChatMessage(b => b.text('Playing' + queue[0].title).url(queue[0].url).text('...'));
 				return playFromUrl(msg.room, queue[0].url);
 			}
 
@@ -304,9 +304,13 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content == (`${prefix}resume`)) {
-		if (!isPlayingMusic(msg.room))
+		if (!isPlayingMusic(msg.room)) {
+			if (queue.length) {
+				await msg.room.sendChatMessage(b => b.text('Playing' + queue[0].title).url(queue[0].url).text('...'));
+				return playFromUrl(msg.room, queue[0].url);
+			}
 			return msg.room.sendChatMessage("Not playing anything.");
-
+		}
 		if (msg.room.audioConnection.player.dispatcher.paused) {
 			if (timer != null) timer.resume();
 			msg.room.audioConnection.player.dispatcher.resume()
