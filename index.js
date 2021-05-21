@@ -233,7 +233,6 @@ bot.on("newChatMsg", async (msg) => {
 		else {
 			await msg.room.sendChatMessage("Skipping to the next song in queue...");
 			nextInQueue(msg.room);
-			msg.room.sendChatMessage("Playing " + queue[0].title);
 		}
 	};
 
@@ -360,6 +359,7 @@ const playFromUrl = async (room, url) => {
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
 		if (!queue.length) {
 			queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' }); playFromUrl(room, querey[0].url);
+			await room.sendChatMessage("Playing Lofi songs");
 		}
 		else nextInQueue(room)
 	})
@@ -394,6 +394,7 @@ const nextInQueue = (room) => {
 	updateDb();
 	if (queue.length) {
 		playFromUrl(room, queue[0].url);
+		await room.sendChatMessage(b => b.text('Playing' + queue[0].title).url(queue[0].url).text('...'));
 		return true;
 	} else return false;
 }
