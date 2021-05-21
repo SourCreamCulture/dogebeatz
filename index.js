@@ -79,11 +79,11 @@ const isPlayingMusic = (room) => {
 const commandList = bot.buildChatMessage((b) =>
   b
     .text("Here's a list of commands:")
-    .text(`|| ${prefix}play <url | query> - Play a song from youtube.`)
-    .text(`|| ${prefix}add <url | query> - Add a song to queue.`)
-    .text(`|| ${prefix}skip - Skip the current song in queue.`)
-    .text(`|| ${prefix}current - Title of the currently playing song.`)
-    .text(`|| ${prefix}queue - List songs in queue.`)
+    .text(`|| ${prefix}add <url | query> - Add a song to the queue.`)
+    .text(`|| ${prefix}skip - Skip the current song in the queue.`)
+    .text(`|| ${prefix}current - Title of the currently played song.`)
+    .text(`|| ${prefix}queue - List of songs in queue.`)
+    .text(`|| ${prefix}play <url | query> - Add a song to the top of the queue and play it.`)
     .text(`|| ${prefix}pause - Pause the player.`)
     .text(`|| ${prefix}resume - Resume the player.`)
     .text(`|| ${prefix}volume <volume> - Set the player volume (0-200)`)
