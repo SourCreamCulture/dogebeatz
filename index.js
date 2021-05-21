@@ -325,14 +325,11 @@ const playFromUrl = async (room, url) => {
 		await room.sendChatMessage("Failed to get video: " + e.message);
 	}
 	if (!stream) return;
-	const length = info.videoDetails.lengthSeconds * 1000
-	console.log({length})
-	console.log({timer})
-	timer = startTimer(length, function () {
+	timer = startTimer(info.videoDetails.lengthSeconds, function () {
 		console.log('a')
 		if (!nextInQueue()) room.sendChatMessage("Nothing in queue!")
 	})
-	console.log({timer})
+	console.log({ timer })
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
 
@@ -370,28 +367,29 @@ const nextInQueue = () => {
 
 
 function startTimer(seconds, oncomplete) {
-	var startTime, timer, obj, ms = seconds*1000,
-	obj = {};
-	obj.resume = function() {
-			startTime = new Date().getTime();
-			timer = setInterval(obj.step,250); // adjust this number to affect granularity
-													// lower numbers are more accurate, but more CPU-expensive
+	var startTime, timer, obj, ms = seconds * 1000,
+		obj = {};
+	obj.resume = function () {
+		startTime = new Date().getTime();
+		timer = setInterval(obj.step, 250); // adjust this number to affect granularity
+		// lower numbers are more accurate, but more CPU-expensive
 	};
-	obj.pause = function() {
-			ms = obj.step();
+	obj.pause = function () {
+		ms = obj.step();
+		clearInterval(timer);
+	};
+	obj.step = function () {
+		var now = Math.max(0, ms - (new Date().getTime() - startTime)),
+			m = Math.floor(now / 60000), s = Math.floor(now / 1000) % 60;
+		s = (s < 10 ? "0" : "") + s;
+		if (now == 0) {
 			clearInterval(timer);
+			obj.resume = function () { };
+			if (oncomplete) oncomplete();
+		}
+		return now;
 	};
-	obj.step = function() {
-			var now = Math.max(0,ms-(new Date().getTime()-startTime)),
-					m = Math.floor(now/60000), s = Math.floor(now/1000)%60;
-			s = (s < 10 ? "0" : "")+s;
-			if( now == 0) {
-					clearInterval(timer);
-					obj.resume = function() {};
-					if( oncomplete) oncomplete();
-			}
-			return now;
-	};
+	obj.reset = function () { ms = seconds * 1000; }
 	obj.resume();
 	return obj;
 }
