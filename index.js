@@ -194,7 +194,7 @@ bot.on("newChatMsg", async (msg) => {
 		}
 		return
 	};
-	if (msg.content.includes(`${prefix}play`)) {
+	if (msg.content.startsWith(`${prefix}play`)) {
 		if (msg.user.id === config.trusted) return
 
 		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
@@ -227,7 +227,7 @@ bot.on("newChatMsg", async (msg) => {
 		}
 		return
 	};
-	if (msg.content.includes(`${prefix}skip`)) {
+	if (msg.content == (`${prefix}skip`)) {
 		if (queue.length <= 1)
 			await msg.room.sendChatMessage("Nothing in queue to skip to!");
 		else {
@@ -237,7 +237,7 @@ bot.on("newChatMsg", async (msg) => {
 		}
 	};
 
-	if (msg.content.includes(`${prefix}current`)) {
+	if (msg.content.startsWith(`${prefix}current`)) {
 		if (!queue.length)
 			await msg.room.sendChatMessage("Nothing in queue");
 		else {
@@ -248,7 +248,7 @@ bot.on("newChatMsg", async (msg) => {
 		}
 	};
 
-	if (msg.content.includes(`${ prefix }add`)) {
+	if (msg.content.startsWith(`${prefix}add`)) {
 		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
 
 		if (videoPattern.test(args[0])) {
@@ -268,7 +268,7 @@ bot.on("newChatMsg", async (msg) => {
 			var songInfo = searched.videos[0]
 			var url = songInfo.url
 			await msg.room.sendChatMessage((b) =>
-				b.text(`Added ${ songInfo.title } `).url(url).text("to queue.")
+				b.text(`Added ${songInfo.title} `).url(url).text("to queue.")
 			);
 
 			addToQueue(url, songInfo.title);
@@ -278,21 +278,21 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 
-	if (msg.content === (`${ prefix }help`)) {
+	if (msg.content === (`${prefix}help`)) {
 		return await msg.user.sendWhisper(commandList);
 	};
-	if (msg.content === (`${ prefix } queue`)) {
+	if (msg.content === (`${prefix}queue`)) {
 		let queueList = [{ type: 'text', value: 'Queue:' }];
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
-			queueList.push({ type: 'text', value: `${ index }: ${ song.title } ` });
+			queueList.push({ type: 'text', value: `${index}: ${song.title} ` });
 			if (queue.length != index + 1)
 				queueList.push({ type: 'text', value: `|| ` });
 		}
 
 		return await msg.user.sendWhisper(queueList);
 	};
-	if (msg.content.includes(`${ prefix }pause`)) {
+	if (msg.content == (`${prefix}pause`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
@@ -301,7 +301,7 @@ bot.on("newChatMsg", async (msg) => {
 		msg.room.audioConnection.player.dispatcher.pause();
 		return
 	};
-	if (msg.content.includes(`${ prefix }resume`)) {
+	if (msg.content == (`${prefix}resume`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
@@ -313,7 +313,7 @@ bot.on("newChatMsg", async (msg) => {
 		}
 		return
 	};
-	if (msg.content.includes(`${ prefix } volume`)) {
+	if (msg.content.startsWith(`${prefix}volume`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
@@ -326,13 +326,12 @@ bot.on("newChatMsg", async (msg) => {
 		msg.room.audioConnection.player.dispatcher.setVolume(volume); // Set music volume
 		return
 	};
-	if (msg.content.includes(`${ prefix } myid`)) {
-		return msg.room.sendChatMessage(`Your id is ${ msg.user.id } `);
+	if (msg.content.startsWith(`${prefix}myid`)) {
+		return msg.room.sendChatMessage(`Your id is ${msg.user.id} `);
 	};
-	if (msg.content.startsWith(`${ prefix } `)) {
+	if (msg.content.startsWith(`${prefix}`)) {
 		return await msg.room.sendChatMessage("Unknown command.");
 	};
-
 });
 
 const playFromUrl = async (room, url) => {
