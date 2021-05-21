@@ -336,10 +336,7 @@ const getQueue = async () => {
 		headers: {
 			'accept': 'application/json',
 		}
-	}).then((r) => {
-		let rr = r.json()
-		console.log({ rr })
-	})
+	}).then(response => response.json())
 }
 
 const addToQueue = (songurl) => {
