@@ -333,8 +333,8 @@ const playFromUrl = async (room, url) => {
 
 const getQueue = async () => {
 	let a = [];
-	await axios.get(dbURL + config.dbId).then(response => response.json())
-		.then(data => a = data);
+	await axios.get(dbURL + config.dbId)
+		.then(r => a = r.data);
 	return JSON.parse(a)
 }
 
@@ -347,7 +347,6 @@ const addToQueue = (songurl) => {
 
 const updateDb = () => {
 	axios.post(dbURL + config.dbId, queue)
-		.then(response => response.json())
 		.catch((error) => {
 			console.error('Error:', error);
 		});
