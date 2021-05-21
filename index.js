@@ -201,6 +201,7 @@ bot.on("newChatMsg", async (msg) => {
       await msg.room.sendChatMessage((b) =>
         b.text(`Playing ${songInfo.title}`).url(url).text("...")
       );
+      msg.room.description = 'Playing' + songInfo.title;
       playFromUrl(msg.room, url);
     }
     return
@@ -260,6 +261,7 @@ const playFromUrl = async (room, url) => {
   let stream;
   try {
     stream = await ytdl(url);
+    console.log({stream})
   } catch (e) {
     await room.sendChatMessage("Failed to get video: " + e.message);
   }
