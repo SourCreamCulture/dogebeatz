@@ -241,7 +241,7 @@ bot.on("newChatMsg", async (msg) => {
 		if (!queue.length)
 			await msg.room.sendChatMessage("Nothing in queue");
 		else {
-			let title = queue[0].title + ` )`;
+			let title = queue[0].title;
 			if (!msg.room.audioConnection || msg.room.audioConnection.player.dispatcher.paused)
 				title = '[paused] ' + title;
 			await msg.room.sendChatMessage((b) =>
