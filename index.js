@@ -340,12 +340,11 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
-		if (!nextInQueue(room)) { queue.push({ url: playlist.lofiNew, title: playlist.lofiNew }); playFromUrl(room, playlist.lofiNew); }
-		//if (!nextInQueue(room)) room.sendChatMessage("Nothing in queue!")
+		if (!queue.length) queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' });
+		nextInQueue(room)
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
-	updateDb();
 };
 
 
