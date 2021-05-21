@@ -343,8 +343,8 @@ const getQueue = async () => {
 }
 
 const addToQueue = (songurl) => {
-	console.log({ queue });
 	queue.push(songurl);
+	console.log({ queue });
 	updateDb();
 }
 
@@ -352,9 +352,6 @@ const addToQueue = (songurl) => {
 const updateDb = () => {
 	fetch(dbURL + config.dbId, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
 		body: JSON.stringify(queue),
 	})
 		.then(response => response.json())
