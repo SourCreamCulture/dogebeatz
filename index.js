@@ -23,7 +23,7 @@ bot.on("ready", async (user) => {
 	queue = await getQueue();
 
 	const foundRooms = topRooms.filter(
-		(room) => room.creatorId == config.ownerid // Filter for rooms created by a specific user
+		(room) => room.creatorId == config.ownerId // Filter for rooms created by a specific user
 	);
 
 	//await bot.joinRoom('7bf0dede-b6e7-4fe9-b5a6-6e19f72ce8a3'); //use if you dont know your user id and want to join a specific room
@@ -53,7 +53,7 @@ bot.on("userJoinRoom", async (user, room) => {
 		`Hi, welcome to the room! Type ${prefix}help to see all my commands.`
 	);
 	// If the user is the bot owner, set them as moderator
-	if (user.id == config.ownerid) await user.setAuthLevel(Constants.AuthLevel.MOD);
+	if (user.id == config.ownerId) await user.setAuthLevel(Constants.AuthLevel.MOD);
 });
 
 const isPlayingMusic = (room) => {
@@ -68,6 +68,7 @@ const commandList = bot.buildChatMessage((b) =>
 	b
 		.text("Here's a list of commands:")
 		.text(`|| ${prefix}play <url | query> - Play a song from youtube.`)
+		.text(`|| ${prefix}add <url | query> - Add a song to queue.`)
 		.text(`|| ${prefix}pause - Pause the player.`)
 		.text(`|| ${prefix}resume - Resume the player.`)
 		.text(`|| ${prefix}volume <volume> - Set the player volume (0-200)`)
@@ -92,7 +93,7 @@ bot.on("newChatMsg", async (msg) => {
 
 
 	if (msg.content.startsWith(`${prefix}banner`)) {
-		if (msg.user.id != config.ownerid) return
+		if (msg.user.id != config.ownerId) return
 
 		//let message = args.join(" ");
 		//if (!message) return msg.user.sendWhisper('You did not supply a new pfp!');
@@ -102,7 +103,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.startsWith(`${prefix}d`)) {
-		if (msg.user.id != config.ownerid) return
+		if (msg.user.id != config.ownerId) return
 
 		let message = args.join(" ");
 		if (!message) return msg.user.sendWhisper('You did not supply a new bio!');
@@ -112,7 +113,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.startsWith(`${prefix}mod`)) {
-		if (msg.user.id != config.trusted) return
+		if (config.trusted.contains(msg.user.id)) return
 
 		//let users = args[0]
 		//if (!users) return msg.user.sendWhisper('You did not supply a user to make mod!');
@@ -328,8 +329,9 @@ const playFromUrl = async (room, url) => {
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
 	const length = info.videoDetails.lengthSeconds * 1000
-	timer = startTimer(length, async () => {
-		if (!nextInQueue()) await room.sendChatMessage("Nothing in queue!")
+	timer = startTimer(length, () => {
+		console.log('a')
+		if (!nextInQueue()) room.sendChatMessage("Nothing in queue!")
 	})
 };
 
