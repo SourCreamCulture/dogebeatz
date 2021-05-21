@@ -334,7 +334,7 @@ const playFromUrl = async (room, url) => {
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
-
+	updateDb();
 };
 
 
@@ -362,7 +362,6 @@ const updateDb = () => {
 const nextInQueue = (room) => {
 	queue.shift();
 	if (!queue.length) queue = [];
-	updateDb();
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
 		return true;
