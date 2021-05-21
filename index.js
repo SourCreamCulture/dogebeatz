@@ -7,12 +7,12 @@ const yts = require("yt-search");
 const fetch = require("node-fetch");
 const axios = require('axios');
 const Constants = Moonstone.Constants;
-
+const utils = require('./utils.js')
 const dbURL = 'https://textdb.dev/api/data/';
 
 var prefix = config.prefix;
-
 var queue = null
+var timer = null;
 
 bot.on("ready", async (user) => {
   console.log("Ready! Logged in as " + user.username);
@@ -269,7 +269,7 @@ const playFromUrl = async (room, url) => {
   let stream;
   try {
     stream = await ytdld(url, { filter: "audioonly" });
-	let info = await ytdl.getInfo(url);
+	let info = await ytdl.getBasicInfo(url);
 	console.log(info);
   } catch (e) {
     await room.sendChatMessage("Failed to get video: " + e.message);
@@ -277,6 +277,7 @@ const playFromUrl = async (room, url) => {
   if (!stream) return;
   const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
   audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
+  console.log(room.audioConnection);
 };
 
 
@@ -308,4 +309,6 @@ const addToQueue = (song) => {
     });
 }
 
+
 bot.connect();
+
