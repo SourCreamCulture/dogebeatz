@@ -385,7 +385,6 @@ const playFromUrl = async (room, url) => {
   try {
     stream = await ytdld(url, { filter: 'audioonly' });
     var info = await ytdl.getBasicInfo(url);
-    //console.log(info.);
   } catch (e) {
     await room.sendChatMessage('Failed to get video: ' + e.message);
   }
