@@ -278,7 +278,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 
-	if (msg.content === (`${ prefix } help`)) {
+	if (msg.content === (`${ prefix }help`)) {
 		return await msg.user.sendWhisper(commandList);
 	};
 	if (msg.content === (`${ prefix } queue`)) {
@@ -292,7 +292,7 @@ bot.on("newChatMsg", async (msg) => {
 
 		return await msg.user.sendWhisper(queueList);
 	};
-	if (msg.content.includes(`${ prefix } pause`)) {
+	if (msg.content.includes(`${ prefix }pause`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
@@ -301,7 +301,7 @@ bot.on("newChatMsg", async (msg) => {
 		msg.room.audioConnection.player.dispatcher.pause();
 		return
 	};
-	if (msg.content.includes(`${ prefix } resume`)) {
+	if (msg.content.includes(`${ prefix }resume`)) {
 		if (!isPlayingMusic(msg.room))
 			return msg.room.sendChatMessage("Not playing anything.");
 
