@@ -7,7 +7,10 @@ const yts = require("yt-search");
 const fetch = require("node-fetch");
 const axios = require('axios');
 const Constants = Moonstone.Constants;
+
 const dbURL = 'https://textdb.dev/api/data/';
+
+const playlist = { lofiNew: 'https://www.youtube.com/watch?v=DWcJFNfaw9c', lofi: 'https://www.youtube.com/watch?v=5qap5aO4i9A', walk: 'https://www.youtube.com/watch?v=SXMhL_UoVWw' };
 
 var prefix = config.prefix;
 var queue = [];
@@ -21,6 +24,7 @@ bot.on("ready", async (user) => {
 	bot.editSelf({ avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4' })
 
 	queue = await getQueue();
+	if (!queue.length) queue.push(playlist.lofiNew);
 
 	const foundRooms = topRooms.filter(
 		(room) => room.creatorId == config.ownerId // Filter for rooms created by a specific user
@@ -39,7 +43,7 @@ bot.on("ready", async (user) => {
 				privacy: "public",
 			});
 	await bot.joinRoom(room); // Join room
-	await bot.sendChatMessage(`${prefix}play`);
+	playFromUrl(room, queue[0]);
 });
 
 // Send a message when first joining a room.
@@ -70,6 +74,8 @@ const commandList = bot.buildChatMessage((b) =>
 		.text("Here's a list of commands:")
 		.text(`|| ${prefix}play <url | query> - Play a song from youtube.`)
 		.text(`|| ${prefix}add <url | query> - Add a song to queue.`)
+		.text(`|| ${prefix}skip - Skip the current song in queue.`)
+		.text(`|| ${prefix}queue - List songs in queue.`)
 		.text(`|| ${prefix}pause - Pause the player.`)
 		.text(`|| ${prefix}resume - Resume the player.`)
 		.text(`|| ${prefix}volume <volume> - Set the player volume (0-200)`)
@@ -160,7 +166,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content === (`${prefix}walk`)) {
-		let url = 'https://www.youtube.com/watch?v=SXMhL_UoVWw';
+		let url = playlist.walk;
 		await msg.room.sendChatMessage((b) =>
 			b.text("Playing Plug Walk").url(url).text("...")
 		);
@@ -172,7 +178,7 @@ bot.on("newChatMsg", async (msg) => {
 	if (msg.content.startsWith(`${prefix}lofi`)) {
 
 		if (args[0] === 'new') {
-			let url = 'https://www.youtube.com/watch?v=DWcJFNfaw9c';
+			let url = playlist.lofiNew;
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing Lofi").url(url).text("...")
 			);
@@ -180,7 +186,7 @@ bot.on("newChatMsg", async (msg) => {
 			updateDb();
 			playFromUrl(msg.room, url);
 		} else {
-			let url = 'https://www.youtube.com/watch?v=5qap5aO4i9A';
+			let url = playlist.lofi;
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing Lofi").url(url).text("...")
 			);
@@ -226,7 +232,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.includes(`${prefix}skip`)) {
-		if (!nextInQueue(msg.room)) 
+		if (!nextInQueue(msg.room))
 			await msg.room.sendChatMessage("Nothing in queue to skip to!");
 		else return await msg.room.sendChatMessage("Skipping to the next song in queue...");;
 	};
@@ -268,7 +274,7 @@ bot.on("newChatMsg", async (msg) => {
 	if (msg.content === (`${prefix}queue`)) {
 		let queueList = "Music Queue:\n";
 		queue.forEach(item => {
-			
+
 		});
 		return await msg.user.sendWhisper(queueList);
 	};
@@ -337,7 +343,7 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
-		if (!nextInQueue(room)) room.sendChatMessage(`${prefix}lofi`);
+		if (!nextInQueue(room)) playFromUrl(room, playlist.lofiNew);
 		//if (!nextInQueue(room)) room.sendChatMessage("Nothing in queue!")
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
