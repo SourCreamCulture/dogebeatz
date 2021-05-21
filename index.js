@@ -270,7 +270,7 @@ bot.on("newChatMsg", async (msg) => {
 			return msg.room.sendChatMessage("Not playing anything.");
 
 		if (msg.room.audioConnection.player.dispatcher.paused) return msg.room.sendChatMessage("Music is already paused!")
-		if (timer) timer.pause();
+		if (timer != null) timer.pause();
 		msg.room.audioConnection.player.dispatcher.pause();
 		return
 	};
@@ -279,7 +279,7 @@ bot.on("newChatMsg", async (msg) => {
 			return msg.room.sendChatMessage("Not playing anything.");
 
 		if (msg.room.audioConnection.player.dispatcher.paused) {
-			if (timer) timer.resume();
+			if (timer != null) timer.resume();
 			msg.room.audioConnection.player.dispatcher.resume()
 		} else {
 			msg.room.sendChatMessage("The Music is not paused!");
