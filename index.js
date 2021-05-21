@@ -281,13 +281,11 @@ const playFromUrl = async (room, url) => {
 
 
 const getQueue = async () => {
-  console.log(config);
   return await fetch(dbURL + config.dbId, {
     headers: {
       'accept': 'application/json',
     }
   }).then((r) => {
-	console.log(r);
     return r.json()
   })
 }
