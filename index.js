@@ -268,7 +268,7 @@ const playFromUrl = async (room, url) => {
   }
   let stream;
   try {
-    stream = await ytdl(url, { filter: "audioonly" });
+    stream = await ytdld(url, { filter: "audioonly" });
 	let info = await ytdl.getInfo(url);
 	console.log(info);
   } catch (e) {
