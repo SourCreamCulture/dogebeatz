@@ -325,13 +325,17 @@ const playFromUrl = async (room, url) => {
 		await room.sendChatMessage("Failed to get video: " + e.message);
 	}
 	if (!stream) return;
+	const length = info.videoDetails.lengthSeconds * 1000
+	console.log({length})
+	console.log({timer})
+	timer = startTimer(length, function () {
+		console.log('a')
+		if (!nextInQueue()) room.sendChatMessage("Nothing in queue!")
+	})
+	console.log({timer})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
-	const length = info.videoDetails.lengthSeconds * 1000
-	timer = startTimer(length, function() {
-		console.log('a')
-		if (!nextInQueue())	 room.sendChatMessage("Nothing in queue!")
-	})
+
 };
 
 
