@@ -369,30 +369,28 @@ const nextInQueue = () => {
 }
 
 
-const startTimer = (seconds, oncomplete) => {
-	var startTime, timer, obj, ms = seconds * 1000,
-		obj = {};
-	obj.resume = function () {
-		startTime = new Date().getTime();
-		timer = setInterval(obj.step, 250); // adjust this number to affect granularity
-		// lower numbers are more accurate, but more CPU-expensive
+function startTimer(seconds, oncomplete) {
+	var startTime, timer, obj, ms = seconds*1000,
+	obj = {};
+	obj.resume = function() {
+			startTime = new Date().getTime();
+			timer = setInterval(obj.step,250); // adjust this number to affect granularity
+													// lower numbers are more accurate, but more CPU-expensive
 	};
-	obj.pause = function () {
-		ms = obj.step();
-		clearInterval(timer);
-	};
-	obj.step = function () {
-		var now = Math.max(0, ms - (new Date().getTime() - startTime));
-
-		//var minutes = Math.floor(now / 60000), s = Math.floor(now / 1000) % 60;
-		//var seconds = (s < 10 ? "0" : "") + s;
-
-		if (now == 0) {
+	obj.pause = function() {
+			ms = obj.step();
 			clearInterval(timer);
-			obj.resume = function () { };
-			if (oncomplete) oncomplete();
-		}
-		return now;
+	};
+	obj.step = function() {
+			var now = Math.max(0,ms-(new Date().getTime()-startTime)),
+					m = Math.floor(now/60000), s = Math.floor(now/1000)%60;
+			s = (s < 10 ? "0" : "")+s;
+			if( now == 0) {
+					clearInterval(timer);
+					obj.resume = function() {};
+					if( oncomplete) oncomplete();
+			}
+			return now;
 	};
 	obj.resume();
 	return obj;
