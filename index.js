@@ -225,7 +225,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.includes(`${prefix}skip`)) {
-		if (nextInQueue() == false)
+		if (nextInQueue(msg.room) == false)
 			msg.room.sendChatMessage("Nothing to skip!");
 	};
 	if (msg.content.includes(`${prefix}add`)) {
