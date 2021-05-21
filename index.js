@@ -39,8 +39,6 @@ bot.on("ready", async (user) => {
 				privacy: "public",
 			});
 	await bot.joinRoom(room); // Join room
-	if (queue.length) playFromUrl(room, queue[0]);
-
 });
 
 // Send a message when first joining a room.
