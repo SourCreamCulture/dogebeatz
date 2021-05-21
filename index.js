@@ -326,7 +326,6 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, async function () {
-		console.log('a')
 		if (!nextInQueue(room)) await room.sendChatMessage("Nothing in queue!")
 	})
 	console.log({ timer })
@@ -349,16 +348,17 @@ const addToQueue = (songurl) => {
 }
 
 
-const updateDb = () => {
-	axios.post(dbURL + config.dbId, JSON.stringify(queue))
+const updateDb = async () => {
+	await axios.post(dbURL + config.dbId, JSON.stringify(queue))
 		.catch((error) => {
 			console.error('Error:', error);
 		});
 }
 
-const nextInQueue = (room) => {
+const nextInQueue = async (room) => {
 	queue.shift();
-	updateDb();
+	if (!queue) queue = [];
+	await updateDb();
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
 		return true;
