@@ -1,11 +1,15 @@
 const config = require("./config.js");
 const Moonstone = require("moonstone-wrapper");
-const ytdl = require("ytdl-core-discord");
+const ytdld = require("ytdl-core-discord");
+const ytdl = require('ytdl-core');
 const bot = Moonstone(config.botToken);
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 const axios = require('axios');
 const Constants = Moonstone.Constants;
+
+const dbURL = 'https://textdb.dev/api/data/';
+
 var prefix = config.prefix;
 
 bot.on("ready", async (user) => {
@@ -14,6 +18,7 @@ bot.on("ready", async (user) => {
   console.log("There are " + topRooms.length + " available rooms.");
 
   bot.editSelf({ avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4' })
+
 
   const foundRooms = topRooms.filter(
     (room) => room.creatorId == config.ownerid // Filter for rooms created by a specific user
@@ -201,7 +206,6 @@ bot.on("newChatMsg", async (msg) => {
       await msg.room.sendChatMessage((b) =>
         b.text(`Playing ${songInfo.title}`).url(url).text("...")
       );
-      msg.room.description = 'Playing' + songInfo.title;
       playFromUrl(msg.room, url);
     }
     return
@@ -209,7 +213,7 @@ bot.on("newChatMsg", async (msg) => {
   if (msg.content === (`${prefix}help`)) {
     return await msg.user.sendWhisper(commandList);
   };
-  if (msg.content.includes(`${prefix}pause`)) {
+  if (msg.content.includes(`${prefix}pause`)) {*
     if (!isPlayingMusic(msg.room))
       return msg.room.sendChatMessage("Not playing anything.");
 
@@ -260,8 +264,8 @@ const playFromUrl = async (room, url) => {
   }
   let stream;
   try {
-    stream = await ytdl(url);
-    console.log({stream})
+    stream = await ytdl(url, { filter: "audioonly" });
+    console.log({stream});
   } catch (e) {
     await room.sendChatMessage("Failed to get video: " + e.message);
   }
@@ -269,5 +273,34 @@ const playFromUrl = async (room, url) => {
   const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
   audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
 };
+
+
+
+const getQueue = async () => {
+  await fetch(dbURL, {
+    headers: {
+      'accept': 'application/json',
+    }
+  }).then((r) => {
+    return r.json()
+  })
+}
+
+const addToQueue = (song) => {
+  fetch(dbURL, {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
 
 bot.connect();
