@@ -360,7 +360,6 @@ const updateDb = () => {
 
 const nextInQueue = (room) => {
 	queue.shift();
-	if (!queue) queue = [];
 	console.log({ queue })
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
