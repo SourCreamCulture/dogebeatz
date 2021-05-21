@@ -213,7 +213,7 @@ bot.on("newChatMsg", async (msg) => {
   if (msg.content === (`${prefix}help`)) {
     return await msg.user.sendWhisper(commandList);
   };
-  if (msg.content.includes(`${prefix}pause`)) {*
+  if (msg.content.includes(`${prefix}pause`)) {
     if (!isPlayingMusic(msg.room))
       return msg.room.sendChatMessage("Not playing anything.");
 
@@ -265,7 +265,7 @@ const playFromUrl = async (room, url) => {
   let stream;
   try {
     stream = await ytdl(url, { filter: "audioonly" });
-    console.log({stream});
+    console.log({ stream });
   } catch (e) {
     await room.sendChatMessage("Failed to get video: " + e.message);
   }
