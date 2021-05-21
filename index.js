@@ -248,7 +248,7 @@ bot.on("newChatMsg", async (msg) => {
 		}
 	};
 
-	if (msg.content.includes(`${ prefix } add`)) {
+	if (msg.content.includes(`${ prefix }add`)) {
 		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
 
 		if (videoPattern.test(args[0])) {
