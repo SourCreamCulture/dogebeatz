@@ -394,7 +394,7 @@ const nextInQueue = (room) => {
 	updateDb();
 	if (queue.length) {
 		playFromUrl(room, queue[0].url);
-		await room.sendChatMessage(b => b.text('Playing' + queue[0].title).url(queue[0].url).text('...'));
+		room.sendChatMessage(b => b.text('Playing' + queue[0].title).url(queue[0].url).text('...'));
 		return true;
 	} else return false;
 }
