@@ -164,6 +164,7 @@ bot.on("newChatMsg", async (msg) => {
 		await msg.room.sendChatMessage((b) =>
 			b.text("Playing Plug Walk").url(url).text("...")
 		);
+		queue = [url].concat(queue);
 		playFromUrl(msg.room, url);
 		return
 	};
@@ -174,18 +175,19 @@ bot.on("newChatMsg", async (msg) => {
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing Lofi").url(url).text("...")
 			);
+			queue = [url].concat(queue);
 			playFromUrl(msg.room, url);
 		} else {
 			let url = 'https://www.youtube.com/watch?v=5qap5aO4i9A';
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing Lofi").url(url).text("...")
 			);
+			queue = [url].concat(queue);
 			playFromUrl(msg.room, url);
 		}
 		return
 	};
 	if (msg.content.includes(`${prefix}play`)) {
-
 		if (msg.user.id === config.trusted) return
 
 		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
@@ -196,7 +198,7 @@ bot.on("newChatMsg", async (msg) => {
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing").url(url).text("...")
 			);
-
+			queue = [url].concat(queue);
 			playFromUrl(msg.room, url);
 
 		} else {
@@ -210,10 +212,49 @@ bot.on("newChatMsg", async (msg) => {
 			await msg.room.sendChatMessage((b) =>
 				b.text(`Playing ${songInfo.title}`).url(url).text("...")
 			);
+			queue = [url].concat(queue);
 			playFromUrl(msg.room, url);
 		}
 		return
 	};
+
+	if (msg.content.includes(`${prefix}add`)) {
+		if (msg.user.id === config.trusted) return
+
+		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
+
+		if (videoPattern.test(args[0])) {
+
+			var url = args[0];
+			await msg.room.sendChatMessage((b) =>
+				b.text("Added").url(url).text("to queue.")
+			);
+
+			addToQueue(url)
+
+			//playFromUrl(msg.room, url);
+
+		} else {
+			var searchString = args.join(" ");
+			if (!searchString) return await msg.room.sendChatMessage('You didnt provide a song to add!')
+
+			var searched = await yts.search(searchString)
+			//if(searched.videos.length === 0)return await msg.room.sendChatMessage('Looks like I wasnt able to find this video on youtube!')
+			var songInfo = searched.videos[0]
+			var url = songInfo.url
+			await msg.room.sendChatMessage((b) =>
+				b.text(`Added ${songInfo.title}`).url(url).text("to queue.")
+			);
+
+			addToQueue(url);
+
+			//playFromUrl(msg.room, url);
+		}
+		if (queue.length == 1)
+			playFromUrl(msg.room, queue[0]);
+		return
+	};
+
 	if (msg.content === (`${prefix}help`)) {
 		return await msg.user.sendWhisper(commandList);
 	};
@@ -222,6 +263,7 @@ bot.on("newChatMsg", async (msg) => {
 			return msg.room.sendChatMessage("Not playing anything.");
 
 		if (msg.room.audioConnection.player.dispatcher.paused) return msg.room.sendChatMessage("Music is already paused!")
+		if (timer) timer.pause();
 		msg.room.audioConnection.player.dispatcher.pause();
 		return
 	};
@@ -230,6 +272,7 @@ bot.on("newChatMsg", async (msg) => {
 			return msg.room.sendChatMessage("Not playing anything.");
 
 		if (msg.room.audioConnection.player.dispatcher.paused) {
+			if (timer) timer.resume();
 			msg.room.audioConnection.player.dispatcher.resume()
 		} else {
 			msg.room.sendChatMessage("The Music is not paused!");
@@ -259,6 +302,10 @@ bot.on("newChatMsg", async (msg) => {
 });
 
 const playFromUrl = async (room, url) => {
+	if (timer) {
+		timer.pause();
+		timer = null;
+	}
 	if (!room.selfUser.isSpeaker) {
 		await room.sendChatMessage(
 			"I need to be a speaker in order to play music."
@@ -269,8 +316,7 @@ const playFromUrl = async (room, url) => {
 	let stream;
 	try {
 		stream = await ytdld(url, { filter: "audioonly" });
-		let info = await ytdl.getBasicInfo(url);
-		console.log(info.videoDetails.lengthSeconds*1000);
+		var info = await ytdl.getBasicInfo(url);
 		//console.log(info.);
 	} catch (e) {
 		await room.sendChatMessage("Failed to get video: " + e.message);
@@ -278,7 +324,10 @@ const playFromUrl = async (room, url) => {
 	if (!stream) return;
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
-	let rc = room.audioConnection
+	const length = info.videoDetails.lengthSeconds * 1000
+	timer = startTimer(length, () => {
+		if (!nextInQueue()) await room.sendChatMessage("Nothing in queue!")
+	})
 };
 
 
@@ -293,13 +342,19 @@ const getQueue = async () => {
 	})
 }
 
-const addToQueue = (song) => {
-	fetch(dbURL, {
-		method: 'POST', // or 'PUT'
+const addToQueue = (songurl) => {
+	queue.push(songurl);
+	updateDb();
+}
+
+
+const updateDb = () => {
+	fetch(dbURL + config.dbId, {
+		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(data),
+		body: JSON.stringify(queue),
 	})
 		.then(response => response.json())
 		.then(data => {
@@ -310,6 +365,44 @@ const addToQueue = (song) => {
 		});
 }
 
+const nextInQueue = () => {
+	queue.shift();
+	updateDb();
+	if (queue.length) {
+		playFromUrl(queue[0]);
+		return true;
+	} else return false;
+}
+
+
+const startTimer = (seconds, oncomplete) => {
+	var startTime, timer, obj, ms = seconds * 1000,
+		obj = {};
+	obj.resume = function () {
+		startTime = new Date().getTime();
+		timer = setInterval(obj.step, 250); // adjust this number to affect granularity
+		// lower numbers are more accurate, but more CPU-expensive
+	};
+	obj.pause = function () {
+		ms = obj.step();
+		clearInterval(timer);
+	};
+	obj.step = function () {
+		var now = Math.max(0, ms - (new Date().getTime() - startTime)),
+
+		//var minutes = Math.floor(now / 60000), s = Math.floor(now / 1000) % 60;
+		//var seconds = (s < 10 ? "0" : "") + s;
+
+		if (now == 0) {
+			clearInterval(timer);
+			obj.resume = function () { };
+			if (oncomplete) oncomplete();
+		}
+		return now;
+	};
+	obj.resume();
+	return obj;
+}
 
 bot.connect();
 
