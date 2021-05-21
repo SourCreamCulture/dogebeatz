@@ -212,6 +212,7 @@ bot.on("newChatMsg", async (msg) => {
 			var searchString = args.join(" ");
 			if (!searchString) {
 				if (!queue.length) return await msg.room.sendChatMessage('You didnt provide a song to play!')
+				room.sendChatMessage(b => b.text('Playing' + queue[0].title).url(queue[0].url).text('...'));
 				return playFromUrl(msg.room, queue[0].url);
 			}
 
