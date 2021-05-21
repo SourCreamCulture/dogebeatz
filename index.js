@@ -313,6 +313,7 @@ bot.on("newChatMsg", async (msg) => {
 
 const playFromUrl = async (room, url) => {
 	if (timer) {
+		timer.reset();
 		timer.pause();
 		timer = null;
 	}
