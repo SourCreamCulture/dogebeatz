@@ -342,7 +342,9 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
-		if (!queue.length) { queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' }); playFromUrl(room, querey[0]); }
+		if (!queue.length) {
+			queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' }); playFromUrl(room, querey[0].url);
+		}
 		else nextInQueue(room)
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
