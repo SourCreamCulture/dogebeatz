@@ -39,6 +39,7 @@ bot.on("ready", async (user) => {
 				privacy: "public",
 			});
 	await bot.joinRoom(room); // Join room
+	await room.sendChatMessage(`${prefix}play`);
 });
 
 // Send a message when first joining a room.
@@ -113,7 +114,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.startsWith(`${prefix}mod`)) {
-		if (config.trusted.contains(msg.user.id)) return
+		if (!config.trusted.contains(msg.user.id)) return
 
 		//let users = args[0]
 		//if (!users) return msg.user.sendWhisper('You did not supply a user to make mod!');
@@ -216,7 +217,7 @@ bot.on("newChatMsg", async (msg) => {
 			var songInfo = searched.videos[0]
 			var url = songInfo.url
 			await msg.room.sendChatMessage((b) =>
-				b.text(`Playing ${songInfo.title}`).url(url).text("...")
+				b.text(`Added ${songInfo.title}`).url(url).text(" to the start of the queue.")
 			);
 			queue = [url].concat(queue);
 			updateDb();
@@ -225,8 +226,8 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.includes(`${prefix}skip`)) {
-		if (nextInQueue(msg.room) == false)
-			msg.room.sendChatMessage("Nothing to skip!");
+		if (!nextInQueue(msg.room))
+			msg.room.sendChatMessage("Nothing in queue to skip to!");
 	};
 	if (msg.content.includes(`${prefix}add`)) {
 		if (msg.user.id === config.trusted) return
@@ -237,13 +238,10 @@ bot.on("newChatMsg", async (msg) => {
 
 			var url = args[0];
 			await msg.room.sendChatMessage((b) =>
-				b.text("Added").url(url).text("to queue.")
+				b.text("Added").url(url).text(" to queue.")
 			);
 
 			addToQueue(url)
-
-			//playFromUrl(msg.room, url);
-
 		} else {
 			var searchString = args.join(" ");
 			if (!searchString) return await msg.room.sendChatMessage('You didnt provide a song to add!')
@@ -257,8 +255,6 @@ bot.on("newChatMsg", async (msg) => {
 			);
 
 			addToQueue(url);
-
-			//playFromUrl(msg.room, url);
 		}
 		if (queue.length == 1)
 			playFromUrl(msg.room, queue[0]);
@@ -267,6 +263,13 @@ bot.on("newChatMsg", async (msg) => {
 
 	if (msg.content === (`${prefix}help`)) {
 		return await msg.user.sendWhisper(commandList);
+	};
+	if (msg.content === (`${prefix}queue`)) {
+		let queueList = "Music Queue:\n";
+		queue.forEach(item => {
+			
+		});
+		return await msg.user.sendWhisper(queueList);
 	};
 	if (msg.content.includes(`${prefix}pause`)) {
 		if (!isPlayingMusic(msg.room))
@@ -333,7 +336,7 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
-		if (!nextInQueue(room)) room.sendChatMessage("Nothing in queue!");
+		if (!nextInQueue(room)) room.sendChatMessage(`${prefix}lofi`);
 		//if (!nextInQueue(room)) room.sendChatMessage("Nothing in queue!")
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
