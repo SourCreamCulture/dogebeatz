@@ -46,7 +46,7 @@ bot.on('ready', async (user) => {
       ? foundRooms[0]
       : await bot.createRoom({
           name: 'Music to Chill to',
-          description: 'Powered by Code and Made by @SourCream',
+          description: 'Powered by Code and Made by @SourCream, Contribute here: https://github.com/SourCreamCulture/dogebeatz',
           privacy: 'public',
         });
   await bot.joinRoom(room); // Join room
