@@ -24,7 +24,7 @@ bot.on("ready", async (user) => {
 	bot.editSelf({ avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4' })
 
 	queue = await getQueue();
-	if (!queue.length) queue.push(playlist.lofiNew);
+	if (!queue.length) queue.push({url: playlist.lofiNew, title: 'Lofi msuic'});
 
 	const foundRooms = topRooms.filter(
 		(room) => room.creatorId == config.ownerId // Filter for rooms created by a specific user
@@ -43,7 +43,7 @@ bot.on("ready", async (user) => {
 				privacy: "public",
 			});
 	await bot.joinRoom(room); // Join room
-	playFromUrl(room, queue[0]);
+	playFromUrl(room, queue[0].url);
 });
 
 // Send a message when first joining a room.
@@ -170,8 +170,7 @@ bot.on("newChatMsg", async (msg) => {
 		await msg.room.sendChatMessage((b) =>
 			b.text("Playing Plug Walk").url(url).text("...")
 		);
-		queue = [url].concat(queue);
-		updateDb();
+		addToQueueStart(url, "Plug Walk");
 		playFromUrl(msg.room, url);
 		return
 	};
@@ -182,16 +181,14 @@ bot.on("newChatMsg", async (msg) => {
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing Lofi").url(url).text("...")
 			);
-			queue = [url].concat(queue);
-			updateDb();
+			addToQueueStart(url, "Lofi New");
 			playFromUrl(msg.room, url);
 		} else {
 			let url = playlist.lofi;
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing Lofi").url(url).text("...")
 			);
-			queue = [url].concat(queue);
-			updateDb();
+			addToQueueStart(url, "Lofi");
 			playFromUrl(msg.room, url);
 		}
 		return
@@ -207,8 +204,7 @@ bot.on("newChatMsg", async (msg) => {
 			await msg.room.sendChatMessage((b) =>
 				b.text("Playing").url(url).text("...")
 			);
-			queue = [url].concat(queue);
-			updateDb();
+			addToQueueStart(url, (await yts.search(searchString)).videos[0].title)
 			playFromUrl(msg.room, url);
 
 		} else {
@@ -225,8 +221,7 @@ bot.on("newChatMsg", async (msg) => {
 			await msg.room.sendChatMessage((b) =>
 				b.text(`Added ${songInfo.title}`).url(url).text(" to the start of the queue.")
 			);
-			queue = [url].concat(queue);
-			updateDb();
+			addToQueueStart(url, songInfo.title);
 			playFromUrl(msg.room, url);
 		}
 		return
@@ -248,7 +243,7 @@ bot.on("newChatMsg", async (msg) => {
 				b.text("Added").url(url).text(" to queue.")
 			);
 
-			addToQueue(url)
+			addToQueue(url, (await yts.search(searchString)).videos[0].title)
 		} else {
 			var searchString = args.join(" ");
 			if (!searchString) return await msg.room.sendChatMessage('You didnt provide a song to add!')
@@ -261,10 +256,10 @@ bot.on("newChatMsg", async (msg) => {
 				b.text(`Added ${songInfo.title}`).url(url).text("to queue.")
 			);
 
-			addToQueue(url);
+			addToQueue(url, songInfo.title);
 		}
 		if (queue.length == 1)
-			playFromUrl(msg.room, queue[0]);
+			playFromUrl(msg.room, queue[0].url);
 		return
 	};
 
@@ -273,9 +268,10 @@ bot.on("newChatMsg", async (msg) => {
 	};
 	if (msg.content === (`${prefix}queue`)) {
 		let queueList = "Music Queue:\n";
-		queue.forEach(item => {
-
-		});
+		for (let index = 0; index < queue.length; index++) {
+			const song = queue[index];
+			queueList += `${index}. ${song.tile}\n`;
+		}
 		return await msg.user.sendWhisper(queueList);
 	};
 	if (msg.content.includes(`${prefix}pause`)) {
@@ -359,8 +355,13 @@ const getQueue = async () => {
 	return a.data
 }
 
-const addToQueue = (songurl) => {
-	queue.push(songurl);
+const addToQueue = (songurl, title) => {
+	queue.push({url: songurl, title: title});
+	updateDb();
+}
+
+const addToQueueStart = (songurl, title) => {
+	queue = [{url: songurl, title: title}].concat(queue);
 	updateDb();
 }
 
