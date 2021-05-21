@@ -270,6 +270,7 @@ const playFromUrl = async (room, url) => {
   try {
     stream = await ytdld(url, { filter: "audioonly" });
 	let info = await ytdl.getBasicInfo(url);
+	console.log(info.lengthSeconds);
 	//console.log(info.);
   } catch (e) {
     await room.sendChatMessage("Failed to get video: " + e.message);
@@ -278,7 +279,6 @@ const playFromUrl = async (room, url) => {
   const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
   audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
   let rc = room.audioConnection
-  console.log({rc});
 };
 
 
