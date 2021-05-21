@@ -328,8 +328,8 @@ const playFromUrl = async (room, url) => {
 	if (!stream) return;
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
-	const length = info.videoDetails.lengthSeconds * 100
-	timer = startTimer(length, () => {
+	const length = info.videoDetails.lengthSeconds * 1000
+	timer = startTimer(length, function() {
 		console.log('a')
 		if (!nextInQueue())	 room.sendChatMessage("Nothing in queue!")
 	})
