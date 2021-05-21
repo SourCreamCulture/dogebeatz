@@ -206,7 +206,10 @@ bot.on("newChatMsg", async (msg) => {
 
 		} else {
 			var searchString = args.join(" ");
-			if (!searchString) return await msg.room.sendChatMessage('You didnt provide a song to play!')
+			if (!searchString) {
+				if (!queue.length) return await msg.room.sendChatMessage('You didnt provide a song to play!')
+				playFromUrl(msg.room, queue[0]);
+			}
 
 			var searched = await yts.search(searchString)
 			//if(searched.videos.length === 0)return await msg.room.sendChatMessage('Looks like I wasnt able to find this video on youtube!')
@@ -308,6 +311,7 @@ bot.on("newChatMsg", async (msg) => {
 const playFromUrl = async (room, url) => {
 	if (timer) {
 		timer.pause();
+		timer = null;
 	}
 	if (!room.selfUser.isSpeaker) {
 		await room.sendChatMessage(
@@ -357,7 +361,7 @@ const updateDb = async () => {
 
 const nextInQueue = async (room) => {
 	queue.shift();
-	if (!queue) queue = [];
+	if (!queue.length) queue = [];
 	await updateDb();
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
