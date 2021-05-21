@@ -339,8 +339,7 @@ const getQueue = async () => {
 		}
 	}).then(response => response.json())
 	.then(data => a = data);
-	console.log({a});
-	return a
+	return JSON.parse(a)
 }
 
 const addToQueue = (songurl) => {
