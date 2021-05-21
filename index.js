@@ -344,7 +344,7 @@ const addToQueue = (songurl) => {
 
 
 const updateDb = () => {
-	axios.post(dbURL + config.dbId, queue)
+	axios.post(dbURL + config.dbId, JSON.stringify(queue))
 		.catch((error) => {
 			console.error('Error:', error);
 		});
