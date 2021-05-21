@@ -316,7 +316,6 @@ const playFromUrl = async (room, url) => {
 		timer.reset();
 		timer = null;
 	}
-	console
 	if (!room.selfUser.isSpeaker) {
 		await room.sendChatMessage(
 			"I need to be a speaker in order to play music."
