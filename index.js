@@ -388,7 +388,7 @@ const startTimer = (seconds, oncomplete) => {
 		clearInterval(timer);
 	};
 	obj.step = function () {
-		var now = Math.max(0, ms - (new Date().getTime() - startTime)),
+		var now = Math.max(0, ms - (new Date().getTime() - startTime));
 
 		//var minutes = Math.floor(now / 60000), s = Math.floor(now / 1000) % 60;
 		//var seconds = (s < 10 ? "0" : "") + s;
