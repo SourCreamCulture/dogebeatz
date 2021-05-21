@@ -327,7 +327,7 @@ const playFromUrl = async (room, url) => {
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, async function () {
 		console.log('a')
-		if (!nextInQueue()) async room.sendChatMessage("Nothing in queue!")
+		if (!nextInQueue()) await room.sendChatMessage("Nothing in queue!")
 	})
 	console.log({ timer })
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
