@@ -249,8 +249,6 @@ bot.on("newChatMsg", async (msg) => {
 	};
 
 	if (msg.content.includes(`${ prefix } add`)) {
-		if (msg.user.id === config.trusted) return
-
 		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
 
 		if (videoPattern.test(args[0])) {
