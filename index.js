@@ -164,6 +164,7 @@ bot.on("newChatMsg", async (msg) => {
 			b.text("Playing Plug Walk").url(url).text("...")
 		);
 		queue = [url].concat(queue);
+		updateDb();
 		playFromUrl(msg.room, url);
 		return
 	};
@@ -175,6 +176,7 @@ bot.on("newChatMsg", async (msg) => {
 				b.text("Playing Lofi").url(url).text("...")
 			);
 			queue = [url].concat(queue);
+			updateDb();
 			playFromUrl(msg.room, url);
 		} else {
 			let url = 'https://www.youtube.com/watch?v=5qap5aO4i9A';
@@ -182,6 +184,7 @@ bot.on("newChatMsg", async (msg) => {
 				b.text("Playing Lofi").url(url).text("...")
 			);
 			queue = [url].concat(queue);
+			updateDb();
 			playFromUrl(msg.room, url);
 		}
 		return
@@ -198,6 +201,7 @@ bot.on("newChatMsg", async (msg) => {
 				b.text("Playing").url(url).text("...")
 			);
 			queue = [url].concat(queue);
+			updateDb();
 			playFromUrl(msg.room, url);
 
 		} else {
@@ -212,6 +216,7 @@ bot.on("newChatMsg", async (msg) => {
 				b.text(`Playing ${songInfo.title}`).url(url).text("...")
 			);
 			queue = [url].concat(queue);
+			updateDb();
 			playFromUrl(msg.room, url);
 		}
 		return
