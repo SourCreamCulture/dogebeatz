@@ -332,10 +332,10 @@ const playFromUrl = async (room, url) => {
 		await room.sendChatMessage("Failed to get video: " + e.message);
 	}
 	if (!stream) return;
-	timer = startTimer(info.videoDetails.lengthSeconds, async function () {
+	timer = startTimer(info.videoDetails.lengthSeconds, function () {
 		queue.shift();
 		if (queue.length) playFromUrl(room, queue[0]);
-		else await room.sendChatMessage("Nothing in queue!")
+		else timer = null; room.sendChatMessage("Nothing in queue!");
 		//if (!nextInQueue(room)) room.sendChatMessage("Nothing in queue!")
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
@@ -357,10 +357,7 @@ const addToQueue = (songurl) => {
 }
 
 const updateDb = () => {
-	axios.post(dbURL + config.dbId, JSON.stringify(queue))
-		.catch((error) => {
-			console.error('Error:', error);
-		});
+	axios.post(dbURL + config.dbId, queue)
 }
 
 const nextInQueue = (room) => {
