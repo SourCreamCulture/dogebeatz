@@ -227,7 +227,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.includes(`${prefix}skip`)) {
-		if (!nextInQueue(msg.room))
+		if (!querey.length)
 			await msg.room.sendChatMessage("Nothing in queue to skip to!");
 		else return await msg.room.sendChatMessage("Skipping to the next song in queue...");;
 	};
@@ -270,7 +270,9 @@ bot.on("newChatMsg", async (msg) => {
 		let queueList = [{ type: 'text', value: 'Queue:' }];
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
-			queueList.push({ type: 'text', value: `${index}. ${song.title} || ` });
+			queueList.push({ type: 'text', value: `${index}: ${song.title} ` });
+			if (querey.length != index + 1)
+				queueList.push({ type: 'text', value: `|| ` });
 		}
 
 		return await msg.user.sendWhisper(queueList);
@@ -340,8 +342,8 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
-		if (!queue.length) queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' });
-		nextInQueue(room)
+		if (!queue.length) { queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' }); playFromUrl(room, querey[0]); }
+		else nextInQueue(room)
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
