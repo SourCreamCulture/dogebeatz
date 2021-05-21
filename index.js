@@ -43,7 +43,7 @@ bot.on("ready", async (user) => {
 				privacy: "public",
 			});
 	await bot.joinRoom(room); // Join room
-	playFromUrl(room, queue[0].url);
+	//playFromUrl(room, queue[0].url);
 });
 
 // Send a message when first joining a room.
