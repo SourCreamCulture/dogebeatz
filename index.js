@@ -342,6 +342,7 @@ const getQueue = async () => {
 }
 
 const addToQueue = (songurl) => {
+	console.log({queue});
 	queue.push(songurl);
 	updateDb();
 }
