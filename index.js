@@ -1,29 +1,24 @@
-const config = require("/config.json");
+const config = require("./config.js");
 const Moonstone = require("moonstone-wrapper");
 const ytdl = require("ytdl-core-discord");
-const bot = Moonstone(config.apitoken);
+const bot = Moonstone(config.botToken);
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 const axios = require('axios');
 const Constants = Moonstone.Constants;
-
-const prefix = config.prefix;
-
-const ownerid = 'a307faa0-c573-4fd8-8229-6194fab201e0';
-
-const trusted = ['a307faa0-c573-4fd8-8229-6194fab201e0']
+var prefix = config.prefix;
 
 bot.on("ready", async (user) => {
   console.log("Ready! Logged in as " + user.username);
   const topRooms = await bot.getTopRooms();
   console.log("There are " + topRooms.length + " available rooms.");
-    
-  bot.editSelf({avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4'})
+
+  bot.editSelf({ avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4' })
 
   const foundRooms = topRooms.filter(
-    (room) => room.creatorId == ownerid // Filter for rooms created by a specific user
+    (room) => room.creatorId == config.ownerid // Filter for rooms created by a specific user
   );
-  
+
   //await bot.joinRoom('7bf0dede-b6e7-4fe9-b5a6-6e19f72ce8a3'); //use if you dont know your user id and want to join a specific room
 
   // If the filter found a room, join it, otherwise create one.
@@ -31,11 +26,11 @@ bot.on("ready", async (user) => {
     foundRooms.length > 0
       ? foundRooms[0]
       : await bot.createRoom({
-          name: "Music to Chill to",
-          description:
-            "Powered by Code and Made by @SourCream",
-          privacy: "public",
-        });
+        name: "[BOT TESTING]",
+        description:
+          "testing",
+        privacy: "public",
+      });
   await bot.joinRoom(room); // Join room
 });
 
@@ -50,8 +45,8 @@ bot.on("userJoinRoom", async (user, room) => {
   await user.sendWhisper(
     `Hi, welcome to the room! Type ${prefix}help to see all my commands.`
   );
-    // If the user is the bot owner, set them as moderator
-  if (user.id == ownerid) await user.setAuthLevel(Constants.AuthLevel.MOD);
+  // If the user is the bot owner, set them as moderator
+  if (user.id == config.ownerid) await user.setAuthLevel(Constants.AuthLevel.MOD);
 });
 
 const isPlayingMusic = (room) => {
@@ -80,177 +75,177 @@ bot.on("newChatMsg", async (msg) => {
   // Command parser
 
   if (msg.user.id === bot.user.id) return
-  
-    const command = msg.content.includes(" ")
-      ? msg.content.split(" ")[0]
-      : msg.content;
-    const args = msg.content.includes(" ")
-      ? msg.content.split(" ").slice(1)
-      : [];
-  
-    
-        if (msg.content.startsWith(`${prefix}banner`)){
-   if (msg.user.id != ownerid) return
-    
+
+  const command = msg.content.includes(" ")
+    ? msg.content.split(" ")[0]
+    : msg.content;
+  const args = msg.content.includes(" ")
+    ? msg.content.split(" ").slice(1)
+    : [];
+
+
+  if (msg.content.startsWith(`${prefix}banner`)) {
+    if (msg.user.id != config.ownerid) return
+
     //let message = args.join(" ");
-   //if (!message) return msg.user.sendWhisper('You did not supply a new pfp!');
-    
-    await bot.editSelf({bannerUrl: 'https://pbs.twimg.com/profile_banners/840626569743912960/1601562221/1500x500'})
-    
+    //if (!message) return msg.user.sendWhisper('You did not supply a new pfp!');
+
+    await bot.editSelf({ bannerUrl: 'https://pbs.twimg.com/profile_banners/840626569743912960/1601562221/1500x500' })
+
     return
-};
-    if (msg.content.startsWith(`${prefix}d`)){
-   if (msg.user.id != ownerid) return
-    
+  };
+  if (msg.content.startsWith(`${prefix}d`)) {
+    if (msg.user.id != config.ownerid) return
+
     let message = args.join(" ");
-   if (!message) return msg.user.sendWhisper('You did not supply a new bio!');
-    
-    await bot.editSelf({bio: message})
-    
+    if (!message) return msg.user.sendWhisper('You did not supply a new bio!');
+
+    await bot.editSelf({ bio: message })
+
     return
-};
-if (msg.content.startsWith(`${prefix}mod`)){
-   if (msg.user.id != trusted) return
-    
+  };
+  if (msg.content.startsWith(`${prefix}mod`)) {
+    if (msg.user.id != config.trusted) return
+
     //let users = args[0]
-   //if (!users) return msg.user.sendWhisper('You did not supply a user to make mod!');
-    
+    //if (!users) return msg.user.sendWhisper('You did not supply a user to make mod!');
+
     await msg.user.setAuthLevel(Constants.AuthLevel.MOD);
-    
+
     return
-};
-        if (msg.content.startsWith(`${prefix}stats`)){
+  };
+  if (msg.content.startsWith(`${prefix}stats`)) {
     axios.get('https://api.dogegarden.net/v1/statistics')
-  .then(function (response) {
-    let stats = response.data
-    
-       const statlist = bot.buildChatMessage((b) =>
-  b
-    .text("Here's some dogehouse stats:")
-    .text(`|| Rooms: ${stats.totalRooms}`)
-    .text(`|| Scheduled Rooms: ${stats.totalScheduledRooms}`)
-    .text(`|| Registered Users: ${stats.totalRegistered}`)
-    .text(`|| Online: ${stats.totalOnline}`)
-    .text(`|| Bots Online: ${stats.totalBotsOnline}`)
-);
-      msg.user.sendWhisper(statlist);
-}).catch(function (error) {
-    msg.user.sendWhisper(`Sorry, I had trouble finding the doges! \`${error}\``)
-  })
+      .then(function (response) {
+        let stats = response.data
+
+        const statlist = bot.buildChatMessage((b) =>
+          b
+            .text("Here's some dogehouse stats:")
+            .text(`|| Rooms: ${stats.totalRooms}`)
+            .text(`|| Scheduled Rooms: ${stats.totalScheduledRooms}`)
+            .text(`|| Registered Users: ${stats.totalRegistered}`)
+            .text(`|| Online: ${stats.totalOnline}`)
+            .text(`|| Bots Online: ${stats.totalBotsOnline}`)
+        );
+        msg.user.sendWhisper(statlist);
+      }).catch(function (error) {
+        msg.user.sendWhisper(`Sorry, I had trouble finding the doges! \`${error}\``)
+      })
 
     return
-};
-      if (msg.content.startsWith(`${prefix}chat`)){
-          var searchString = args.join(" ");
-    if (!searchString)return await msg.room.sendChatMessage('You didnt provide anything to say!')
-    
-        fetch(
-        `https://api.monkedev.com/fun/chat?msg=${encodeURIComponent(
-            searchString
-        )}&uid=0101`
+  };
+  if (msg.content.startsWith(`${prefix}chat`)) {
+    var searchString = args.join(" ");
+    if (!searchString) return await msg.room.sendChatMessage('You didnt provide anything to say!')
+
+    fetch(
+      `https://api.monkedev.com/fun/chat?msg=${encodeURIComponent(
+        searchString
+      )}&uid=0101`
     )
-        .then((res) => res.json())
-        .then(async (json) => {
-            return await msg.room.sendChatMessage(json.response);
-        });
+      .then((res) => res.json())
+      .then(async (json) => {
+        return await msg.room.sendChatMessage(json.response);
+      });
     return
-};
-    if (msg.content === (`${prefix}walk`)){
-   let url = 'https://www.youtube.com/watch?v=SXMhL_UoVWw';
+  };
+  if (msg.content === (`${prefix}walk`)) {
+    let url = 'https://www.youtube.com/watch?v=SXMhL_UoVWw';
     await msg.room.sendChatMessage((b) =>
-          b.text("Playing Plug Walk").url(url).text("...")
-        );
-        playFromUrl(msg.room, url);
+      b.text("Playing Plug Walk").url(url).text("...")
+    );
+    playFromUrl(msg.room, url);
     return
-};
-  if (msg.content.startsWith(`${prefix}lofi`)){
-   
-      if (args[0] === 'new'){
-          let url = 'https://www.youtube.com/watch?v=DWcJFNfaw9c';
-              await msg.room.sendChatMessage((b) =>
-          b.text("Playing Lofi").url(url).text("...")
-        );
-        playFromUrl(msg.room, url);
-      } else {
-          let url = 'https://www.youtube.com/watch?v=5qap5aO4i9A';
-              await msg.room.sendChatMessage((b) =>
-          b.text("Playing Lofi").url(url).text("...")
-        );
-        playFromUrl(msg.room, url);
-      }
-    return
-};
-      if (msg.content.includes(`${prefix}play`)){
-        
-        if (msg.user.id === trusted) return
-        
-        const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
-        
-        if (videoPattern.test(args[0])) {
+  };
+  if (msg.content.startsWith(`${prefix}lofi`)) {
 
-                  var url = args[0];
-        await msg.room.sendChatMessage((b) =>
-          b.text("Playing").url(url).text("...")
-        );
-          
-        playFromUrl(msg.room, url);
-          
-        } else {
-                    var searchString = args.join(" ");
-    if (!searchString)return await msg.room.sendChatMessage('You didnt provide a song to play!')
-      
-          var searched = await yts.search(searchString)
-    //if(searched.videos.length === 0)return await msg.room.sendChatMessage('Looks like I wasnt able to find this video on youtube!')
-    var songInfo = searched.videos[0]
+    if (args[0] === 'new') {
+      let url = 'https://www.youtube.com/watch?v=DWcJFNfaw9c';
+      await msg.room.sendChatMessage((b) =>
+        b.text("Playing Lofi").url(url).text("...")
+      );
+      playFromUrl(msg.room, url);
+    } else {
+      let url = 'https://www.youtube.com/watch?v=5qap5aO4i9A';
+      await msg.room.sendChatMessage((b) =>
+        b.text("Playing Lofi").url(url).text("...")
+      );
+      playFromUrl(msg.room, url);
+    }
+    return
+  };
+  if (msg.content.includes(`${prefix}play`)) {
+
+    if (msg.user.id === config.trusted) return
+
+    const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
+
+    if (videoPattern.test(args[0])) {
+
+      var url = args[0];
+      await msg.room.sendChatMessage((b) =>
+        b.text("Playing").url(url).text("...")
+      );
+
+      playFromUrl(msg.room, url);
+
+    } else {
+      var searchString = args.join(" ");
+      if (!searchString) return await msg.room.sendChatMessage('You didnt provide a song to play!')
+
+      var searched = await yts.search(searchString)
+      //if(searched.videos.length === 0)return await msg.room.sendChatMessage('Looks like I wasnt able to find this video on youtube!')
+      var songInfo = searched.videos[0]
       var url = songInfo.url
       await msg.room.sendChatMessage((b) =>
-          b.text(`Playing ${songInfo.title}`).url(url).text("...")
-        );
-        playFromUrl(msg.room, url);
-        }
-        return
-};
-  if (msg.content === (`${prefix}help`)){
+        b.text(`Playing ${songInfo.title}`).url(url).text("...")
+      );
+      playFromUrl(msg.room, url);
+    }
+    return
+  };
+  if (msg.content === (`${prefix}help`)) {
     return await msg.user.sendWhisper(commandList);
-    };
-  if (msg.content.includes(`${prefix}pause`)){
-        if (!isPlayingMusic(msg.room))
-          return msg.room.sendChatMessage("Not playing anything.");
-        
+  };
+  if (msg.content.includes(`${prefix}pause`)) {
+    if (!isPlayingMusic(msg.room))
+      return msg.room.sendChatMessage("Not playing anything.");
+
     if (msg.room.audioConnection.player.dispatcher.paused) return msg.room.sendChatMessage("Music is already paused!")
-          msg.room.audioConnection.player.dispatcher.pause();
+    msg.room.audioConnection.player.dispatcher.pause();
     return
-};
-    if (msg.content.includes(`${prefix}resume`)){
-        if (!isPlayingMusic(msg.room))
-          return msg.room.sendChatMessage("Not playing anything.");
+  };
+  if (msg.content.includes(`${prefix}resume`)) {
+    if (!isPlayingMusic(msg.room))
+      return msg.room.sendChatMessage("Not playing anything.");
 
-        if (msg.room.audioConnection.player.dispatcher.paused){
-        msg.room.audioConnection.player.dispatcher.resume()
-        } else {
-        msg.room.sendChatMessage("The Music is not paused!");
-        }
+    if (msg.room.audioConnection.player.dispatcher.paused) {
+      msg.room.audioConnection.player.dispatcher.resume()
+    } else {
+      msg.room.sendChatMessage("The Music is not paused!");
+    }
     return
-};
-  if (msg.content.includes(`${prefix}volume`)){
-        if (!isPlayingMusic(msg.room))
-          return msg.room.sendChatMessage("Not playing anything.");
+  };
+  if (msg.content.includes(`${prefix}volume`)) {
+    if (!isPlayingMusic(msg.room))
+      return msg.room.sendChatMessage("Not playing anything.");
 
-        if (args.length < 1)
-          return await msg.room.sendChatMessage("Invalid volume");
-        const volume = parseInt(args[0] / 100);
-        if (volume > 2 * 100|| volume < 0)
-          return await msg.room.sendChatMessage("Invalid volume");
+    if (args.length < 1)
+      return await msg.room.sendChatMessage("Invalid volume");
+    const volume = parseInt(args[0] / 100);
+    if (volume > 2 * 100 || volume < 0)
+      return await msg.room.sendChatMessage("Invalid volume");
 
-        msg.room.audioConnection.player.dispatcher.setVolume(volume); // Set music volume
+    msg.room.audioConnection.player.dispatcher.setVolume(volume); // Set music volume
     return
-};
-  if (msg.content.includes(`${prefix}myid`)){
-       return msg.room.sendChatMessage(`Your id is ${msg.user.id}`);
-};
-  if (msg.content.startsWith(`${prefix}`)){
-        return await msg.room.sendChatMessage("Unknown command.");
-};
+  };
+  if (msg.content.includes(`${prefix}myid`)) {
+    return msg.room.sendChatMessage(`Your id is ${msg.user.id}`);
+  };
+  if (msg.content.startsWith(`${prefix}`)) {
+    return await msg.room.sendChatMessage("Unknown command.");
+  };
 
 });
 
