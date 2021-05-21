@@ -12,6 +12,8 @@ const dbURL = 'https://textdb.dev/api/data/';
 
 var prefix = config.prefix;
 
+var queue = null
+
 bot.on("ready", async (user) => {
   console.log("Ready! Logged in as " + user.username);
   const topRooms = await bot.getTopRooms();
@@ -19,6 +21,8 @@ bot.on("ready", async (user) => {
 
   bot.editSelf({ avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4' })
 
+  queue = getQueue();
+  console.log(queue)
 
   const foundRooms = topRooms.filter(
     (room) => room.creatorId == config.ownerid // Filter for rooms created by a specific user
