@@ -24,7 +24,7 @@ bot.on("ready", async (user) => {
 	bot.editSelf({ avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4' })
 
 	queue = await getQueue();
-	if (!queue.length) queue.push({url: playlist.lofiNew, title: 'Lofi msuic'});
+	if (!queue.length) queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' });
 
 	const foundRooms = topRooms.filter(
 		(room) => room.creatorId == config.ownerId // Filter for rooms created by a specific user
@@ -267,10 +267,10 @@ bot.on("newChatMsg", async (msg) => {
 		return await msg.user.sendWhisper(commandList);
 	};
 	if (msg.content === (`${prefix}queue`)) {
-		let queueList = [{type: 'text', value: 'Queue:'}];
+		let queueList = [{ type: 'text', value: 'Queue:' }];
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
-			queueList.push({type: 'text', value: `${index}. ${song.title} || `});
+			queueList.push({ type: 'text', value: `${index}. ${song.title} || ` });
 		}
 
 		return await msg.user.sendWhisper(queueList);
@@ -340,7 +340,7 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
-		if (!nextInQueue(room)) playFromUrl(room, playlist.lofiNew);
+		if (!nextInQueue(room)) { queue.push({ url: playlist.lofiNew, title: lofi }); playFromUrl(room, playlist.lofiNew); }
 		//if (!nextInQueue(room)) room.sendChatMessage("Nothing in queue!")
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
@@ -357,12 +357,12 @@ const getQueue = async () => {
 }
 
 const addToQueue = (songurl, title) => {
-	queue.push({url: songurl, title: title});
+	queue.push({ url: songurl, title: title });
 	updateDb();
 }
 
 const addToQueueStart = (songurl, title) => {
-	queue = [{url: songurl, title: title}].concat(queue);
+	queue = [{ url: songurl, title: title }].concat(queue);
 	updateDb();
 }
 
