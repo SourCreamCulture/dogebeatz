@@ -332,10 +332,9 @@ const playFromUrl = async (room, url) => {
 
 
 const getQueue = async () => {
-	let a = [];
-	await axios.get(dbURL + config.dbId)
-		.then(r => a = r.data);
-	return JSON.parse(a)
+	let a = await axios.get(dbURL + config.dbId)
+	console.log(a);
+	return a.data
 }
 
 const addToQueue = (songurl) => {
