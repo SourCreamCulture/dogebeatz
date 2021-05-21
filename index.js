@@ -334,14 +334,12 @@ const playFromUrl = async (room, url) => {
 	}
 	if (!stream) return;
 	timer = startTimer(info.videoDetails.lengthSeconds, function () {
-		queue.shift();
-		console.log({queue});
-		if (queue.length) playFromUrl(room, queue[0]);
-		else timer = null; room.sendChatMessage("Nothing in queue!");
+		if (!nextInQueue()) room.sendChatMessage("Nothing in queue!");
 		//if (!nextInQueue(room)) room.sendChatMessage("Nothing in queue!")
 	})
 	const audioConnection = await room.connect(); // Connect to the room voice server (or grab it, if already connected.)
 	audioConnection.play(stream, { type: "opus" }); // Play opus stream from youtube.
+	updateDb();
 };
 
 
@@ -362,7 +360,8 @@ const updateDb = () => {
 }
 
 const nextInQueue = (room) => {
-	console.log(Date.now(), { queue })
+	queue.shift();
+	updateDb();
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
 		return true;
