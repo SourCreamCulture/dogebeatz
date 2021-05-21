@@ -10,7 +10,7 @@ const Constants = Moonstone.Constants;
 const dbURL = 'https://textdb.dev/api/data/';
 
 var prefix = config.prefix;
-var queue = null
+var queue = [];
 var timer = null;
 
 bot.on("ready", async (user) => {
