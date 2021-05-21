@@ -286,6 +286,7 @@ const getQueue = async () => {
       'accept': 'application/json',
     }
   }).then((r) => {
+	console.log(r);
     return r.json()
   })
 }
