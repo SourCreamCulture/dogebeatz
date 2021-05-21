@@ -332,12 +332,14 @@ const playFromUrl = async (room, url) => {
 
 
 const getQueue = async () => {
+	let a = [];
 	await fetch(dbURL + config.dbId, {
 		headers: {
 			'accept': 'application/json',
 		}
 	}).then(response => response.json())
-		.then((response) => { return response })
+	.then(data => a = data);
+	return a;
 }
 
 const addToQueue = (songurl) => {
