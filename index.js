@@ -208,7 +208,7 @@ bot.on("newChatMsg", async (msg) => {
 			var searchString = args.join(" ");
 			if (!searchString) {
 				if (!queue.length) return await msg.room.sendChatMessage('You didnt provide a song to play!')
-				playFromUrl(msg.room, queue[0]);
+				return playFromUrl(msg.room, queue[0]);
 			}
 
 			var searched = await yts.search(searchString)
