@@ -6,6 +6,7 @@ const bot = Moonstone(config.botToken);
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 const axios = require('axios');
+const { trusted } = require("./config.js");
 const Constants = Moonstone.Constants;
 
 const dbURL = 'https://textdb.dev/api/data/';
@@ -122,9 +123,6 @@ bot.on("newChatMsg", async (msg) => {
 	if (msg.content.startsWith(`${prefix}mod`)) {
 		if (!config.trusted.contains(msg.user.id)) return
 
-		//let users = args[0]
-		//if (!users) return msg.user.sendWhisper('You did not supply a user to make mod!');
-
 		await msg.user.setAuthLevel(Constants.AuthLevel.MOD);
 
 		return
@@ -194,8 +192,6 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.startsWith(`${prefix}play`)) {
-		if (msg.user.id === config.trusted) return
-
 		const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
 
 		if (videoPattern.test(args[0])) {
@@ -338,6 +334,13 @@ bot.on("newChatMsg", async (msg) => {
 		return await msg.room.sendChatMessage("Unknown command.");
 	};
 });
+
+bot.on("handRaised", async (user, room) => {
+	if (trusted.includes(user.id))
+		user.setAsSpeaker();
+	else
+		user.setAsListener();
+})
 
 const playFromUrl = async (room, url) => {
 	if (!!timer) {

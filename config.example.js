@@ -8,9 +8,11 @@ module.exports = {
 	// commands prefix
 	"prefix": "-",
 	// your user id
-	"ownerId": "06442a55-761c-4391-94cd-47f2ead4ca16",
+	"ownerId": "",
+	// mods id
 	"trusted": [
 		"06442a55-761c-4391-94cd-47f2ead4ca16"
 	],
+	// uuid for textdb.dev
 	"dbId": ""
 }
