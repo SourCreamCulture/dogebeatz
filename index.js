@@ -267,11 +267,10 @@ bot.on("newChatMsg", async (msg) => {
 		return await msg.user.sendWhisper(commandList);
 	};
 	if (msg.content === (`${prefix}queue`)) {
-		let queueList = "Music Queue:\n";
+		let queueList = "Music Queue:<br>";
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
-			console.log({song, index, queue})
-			queueList += `${index}. ${song.tile}\n`;
+			queueList += `${index}. ${song.title}<br>`;
 		}
 		return await msg.user.sendWhisper(queueList);
 	};
