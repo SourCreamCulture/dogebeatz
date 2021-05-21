@@ -228,7 +228,7 @@ bot.on("newChatMsg", async (msg) => {
 		return
 	};
 	if (msg.content.includes(`${prefix}skip`)) {
-		if (querey.length <= 1)
+		if (queue.length <= 1)
 			await msg.room.sendChatMessage("Nothing in queue to skip to!");
 		else {
 			await msg.room.sendChatMessage("Skipping to the next song in queue...");
@@ -238,7 +238,7 @@ bot.on("newChatMsg", async (msg) => {
 	};
 
 	if (msg.content.includes(`${prefix}current`)) {
-		if (!querey.length)
+		if (!queue.length)
 			await msg.room.sendChatMessage("Nothing in queue");
 		else {
 			let title = queue[0].title + `(${queue[0].url})`;
@@ -288,7 +288,7 @@ bot.on("newChatMsg", async (msg) => {
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
 			queueList.push({ type: 'text', value: `${ index }: ${ song.title } ` });
-			if (querey.length != index + 1)
+			if (queue.length != index + 1)
 				queueList.push({ type: 'text', value: `|| ` });
 		}
 
