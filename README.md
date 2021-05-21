@@ -17,3 +17,4 @@ For ideas of what to add to the bot create an issue.
 - [ ] save playlists
 - [ ] dj mode
 - [ ] command handler
+- [ ] change room name to be the current song playing
