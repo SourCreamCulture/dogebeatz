@@ -270,6 +270,7 @@ bot.on("newChatMsg", async (msg) => {
 		let queueList = "Music Queue:\n";
 		for (let index = 0; index < queue.length; index++) {
 			const song = queue[index];
+			console.log({song, index, queue})
 			queueList += `${index}. ${song.tile}\n`;
 		}
 		return await msg.user.sendWhisper(queueList);
