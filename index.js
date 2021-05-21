@@ -21,7 +21,7 @@ bot.on("ready", async (user) => {
 
   bot.editSelf({ avatarUrl: 'https://avatars.githubusercontent.com/u/83242673?s=400&u=78e0a77d196784ca33e981364fda0129b884ec85&v=4' })
 
-  queue = getQueue();
+  queue = await getQueue();
   console.log(queue)
 
   const foundRooms = topRooms.filter(
@@ -280,8 +280,8 @@ const playFromUrl = async (room, url) => {
 
 
 
-const getQueue = () => {
-  fetch(dbURL, {
+const getQueue = async () => {
+  await fetch(dbURL, {
     headers: {
       'accept': 'application/json',
     }
