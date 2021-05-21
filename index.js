@@ -333,7 +333,6 @@ const playFromUrl = async (room, url) => {
 
 const getQueue = async () => {
 	let a = await axios.get(dbURL + config.dbId)
-	console.log(a);
 	return a.data
 }
 
