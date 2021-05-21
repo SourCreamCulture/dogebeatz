@@ -39,7 +39,7 @@ bot.on("ready", async (user) => {
 				privacy: "public",
 			});
 	await bot.joinRoom(room); // Join room
-	await room.sendChatMessage(`${prefix}play`);
+	await bot.sendChatMessage(`${prefix}play`);
 });
 
 // Send a message when first joining a room.
