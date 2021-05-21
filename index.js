@@ -341,6 +341,7 @@ const playFromUrl = async (room, url) => {
 
 const getQueue = async () => {
 	let a = await axios.get(dbURL + config.dbId)
+	if (a.data == '') a.data = [];
 	return a.data
 }
 
