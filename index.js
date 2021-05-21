@@ -333,12 +333,8 @@ const playFromUrl = async (room, url) => {
 
 const getQueue = async () => {
 	let a = [];
-	await fetch(dbURL + config.dbId, {
-		headers: {
-			'accept': 'application/json',
-		}
-	}).then(response => response.json())
-	.then(data => a = data);
+	await axios.get(dbURL + config.dbId).then(response => response.json())
+		.then(data => a = data);
 	return JSON.parse(a)
 }
 
@@ -350,10 +346,7 @@ const addToQueue = (songurl) => {
 
 
 const updateDb = () => {
-	fetch(dbURL + config.dbId, {
-		method: 'POST',
-		body: JSON.stringify(queue),
-	})
+	axios.post(dbURL + config.dbId, queue)
 		.then(response => response.json())
 		.catch((error) => {
 			console.error('Error:', error);
