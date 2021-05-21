@@ -352,17 +352,17 @@ const addToQueue = (songurl) => {
 }
 
 
-const updateDb = async () => {
-	await axios.post(dbURL + config.dbId, JSON.stringify(queue))
+const updateDb = () => {
+	axios.post(dbURL + config.dbId, JSON.stringify(queue))
 		.catch((error) => {
 			console.error('Error:', error);
 		});
 }
 
-const nextInQueue = async (room) => {
+const nextInQueue = (room) => {
 	queue.shift();
 	if (!queue.length) queue = [];
-	await updateDb();
+	updateDb();
 	if (queue.length) {
 		playFromUrl(room, queue[0]);
 		return true;
