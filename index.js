@@ -298,7 +298,7 @@ bot.on('newChatMsg', async (msg) => {
     return;
   }
 
-  if (msg.content === `${prefix}help`) {
+  if (msg.content === (`${prefix}help`)){
     return await msg.user.sendWhisper(commandList);
   }
   if (msg.content === `${prefix}queue`) {
