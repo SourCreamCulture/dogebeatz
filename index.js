@@ -82,17 +82,34 @@ const commandList = bot.buildChatMessage((b) =>
 	.link('https://git.io/JsDKR')
 );
 
+var dj = false;
+
 // Listen for chat messages
 bot.on('newChatMsg', async (msg) => {
   // Command parser
 
   if (msg.user.id === bot.user.id) return;
 
+  if (dj === true){
+    if (!trusted.includes(msg.user.id)) return;  //if the users id is not in trusted when in dj mode they cannot use the bot
+  }
+
   const command = msg.content.includes(' ')
     ? msg.content.split(' ')[0]
     : msg.content;
   const args = msg.content.includes(' ') ? msg.content.split(' ').slice(1) : [];
 
+  if (msg.content.startsWith(`${prefix}dj`)) {
+    if (!trusted.includes(msg.user.id)) return;
+	
+    if (args[0] === 'on'){
+        dj = !dj;  //if dj is set to false set it to true
+    } else if (args[0] === 'off'){
+        dj = !dj;  //is dj is set to true set it to false
+    }
+
+    return;
+  }
   if (msg.content.startsWith(`${prefix}banner`)) {
     if (msg.user.id != config.ownerId) return;
 
@@ -117,7 +134,7 @@ bot.on('newChatMsg', async (msg) => {
     return;
   }
   if (msg.content.startsWith(`${prefix}mod`)) {
-    if (!config.trusted.contains(msg.user.id)) return;
+    if (!trusted.includes(msg.user.id)) return;
 
     await msg.user.setAuthLevel(Constants.AuthLevel.MOD);
 
