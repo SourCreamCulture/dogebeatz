@@ -30,7 +30,7 @@ Thanks for considering to contribute! here's how to set up your environment:
 - [x] nowplaying
 - [x] skip
 - [ ] save playlists
-- [ ] dj mode
+- [x] dj mode
 - [ ] command handler
 - [ ] change room name to be the current song playing (impossible for now)
 
