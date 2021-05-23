@@ -107,14 +107,15 @@ bot.on('newChatMsg', async (msg) => {
 	
     if (args[0] === 'on'){
         dj = !dj;  //if dj is set to false set it to true
-		return msg.user.sendWhisper('Dj mode turned on! only mods can control the music.');
+		return msg.room.sendChatMessage('Dj mode turned on! only mods can control the music.');
     } else if (args[0] === 'off'){
         dj = !dj;  //is dj is set to true set it to false
-		return msg.user.sendWhisper('Dj mode turned off! everyone can control the music.');
+		return msg.room.sendChatMessage('Dj mode turned off! everyone can control the music.');
     }
 
     return;
   }
+
   if (msg.content.startsWith(`${prefix}banner`)) {
     if (msg.user.id != config.ownerId) return;
 

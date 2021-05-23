@@ -49,3 +49,12 @@
 ### `-stats`
 
 -	Get some stats of dogehouse!
+
+
+
+**MODS ONLY**
+
+### dj <on|off>
+
+-	Turn on DJ mode (only mods can control music)
+
