@@ -93,7 +93,7 @@ bot.on('newChatMsg', async (msg) => {
 
   if (dj === true){
 	//if the users id is not in trusted when in dj mode they cannot use the bot
-	if (msg.content.startsWith(prefxix)) return msg.user.sendWhisper('Dj mode is on! only mods can control music.');
+	if (msg.content.startsWith(prefix)) return msg.user.sendWhisper('Dj mode is on! only mods can control music.');
     if (!trusted.includes(msg.user.id)) return;
   }
 
