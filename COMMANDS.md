@@ -4,11 +4,7 @@
 
 ### `-add <url | query>`
 
-- Add a song to the end of the queue.
-
-### `-skip`
-
--	Skip the current song in the queue.
+-	Add a song to the end of the queue.
 
 ### `-current`
 
@@ -18,10 +14,6 @@
 
 -	List of songs in queue.
 
-### `-play <url | query>`
-
--	Add a song to the top of the queue and play it.
-
 ### `-pause`
 
 -	Pause the player.
@@ -29,6 +21,18 @@
 ### `-resume`
 
 -	Resume the player.
+
+### `-skip`
+
+-	Skip the current song in the queue.
+
+### `-loop <on | off> `
+
+-	Toggle loop mode.
+
+### `-play <url | query>`
+
+-	Add a song to the top of the queue and play it.
 
 ### `-volume <volume>`
 
@@ -51,10 +55,9 @@
 -	Get some stats of dogehouse!
 
 
-
 **MODS ONLY**
 
-### dj <on|off>
+### `-dj <on | off>`
 
 -	Turn on DJ mode (only mods can control music)
 

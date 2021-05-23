@@ -64,6 +64,7 @@ bot.on('userJoinRoom', async (user, room) => {
     `Hi, welcome to the room! Type ${prefix}help to see all my commands.`
   );
   if (dj) user.sendWhisper('Dj mode is on! only mods can control the music.');
+  else if (loop) user.sendWhisper('Looping is turned on; song will replay. You can use -loop <on | off> to toggle it.');
   // If the user is the bot owner, set them as moderator
   if (user.id == config.ownerId)
     await user.setAuthLevel(Constants.AuthLevel.MOD);
@@ -84,6 +85,7 @@ const commandList = bot.buildChatMessage((b) =>
 );
 
 var dj = false;
+var loop = false;
 
 // Listen for chat messages
 bot.on('newChatMsg', async (msg) => {
@@ -111,6 +113,18 @@ bot.on('newChatMsg', async (msg) => {
     } else if (args[0] === 'off'){
         dj = !dj;  //is dj is set to true set it to false
 		return msg.room.sendChatMessage('Dj mode turned off! everyone can control the music.');
+    }
+
+    return;
+  }
+
+  if (msg.content.startsWith(`${prefix}loop`)) {
+    if (args[0] === 'on'){
+        loop = true;
+		return msg.room.sendChatMessage('Looping turned on! the current song will loop.');
+    } else if (args[0] === 'off'){
+        loop = false;
+		return msg.room.sendChatMessage('Looping turned off! the current song won\'t loop.');
     }
 
     return;
@@ -402,6 +416,10 @@ const playFromUrl = async (room, url) => {
   }
   if (!stream) return;
   timer = startTimer(info.videoDetails.lengthSeconds, function () {
+	if (loop) {
+		playFromUrl(room, querey[0].url);
+		return room.sendChatMessage('Looping is on! Replaying the previous song.');
+	}
     if (!queue.length) {
       queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' });
       playFromUrl(room, querey[0].url);
