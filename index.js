@@ -417,12 +417,12 @@ const playFromUrl = async (room, url) => {
   if (!stream) return;
   timer = startTimer(info.videoDetails.lengthSeconds, function () {
 	if (loop) {
-		playFromUrl(room, querey[0].url);
+		playFromUrl(room, queue[0].url);
 		return room.sendChatMessage('Looping is on! Replaying the previous song.');
 	}
     if (!queue.length) {
       queue.push({ url: playlist.lofiNew, title: 'Lofi msuic' });
-      playFromUrl(room, querey[0].url);
+      playFromUrl(room, queue[0].url);
       room.sendChatMessage('Playing Lofi songs');
     } else nextInQueue(room);
   });
