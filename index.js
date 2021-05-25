@@ -8,6 +8,8 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 const { trusted } = require('./config.js');
 const Constants = Moonstone.Constants;
+const sourcebin = require('sourcebin');
+const lyricsFinder = require("lyrics-finder");
 
 const dbURL = 'https://textdb.dev/api/data/';
 
@@ -38,18 +40,20 @@ bot.on('ready', async (user) => {
     (room) => room.creatorId == config.ownerId // Filter for rooms created by a specific user
   );
 
-  //await bot.joinRoom('7bf0dede-b6e7-4fe9-b5a6-6e19f72ce8a3'); //use if you dont know your user id and want to join a specific room
-
+if (config.create === true) {
   // If the filter found a room, join it, otherwise create one.
   const room =
     foundRooms.length > 0
       ? foundRooms[0]
       : await bot.createRoom({
-          name: 'Music to Chill to',
-          description: 'Powered by Code and Made by @SourCream, Contribute here: https://github.com/SourCreamCulture/dogebeatz',
-          privacy: 'public',
+          name: config.roomconfig.name,
+          description: config.roomconfig.description,
+          privacy: config.roomconfig.privacy,
         });
   await bot.joinRoom(room); // Join room
+} else if (config.create === false) {
+  await bot.joinRoom(config.roomID); //use if you dont know your user id and want to join a specific room
+}
 });
 
 // Send a message when first joining a room.
@@ -158,6 +162,40 @@ bot.on('newChatMsg', async (msg) => {
 
     await msg.user.setAuthLevel(Constants.AuthLevel.MOD);
 
+    return;
+  }
+  if (msg.content.startsWith(`${prefix}lyrics`)) {
+
+    var searchString = args.join(' ');
+
+    if (searchString) {
+
+      var lyrics = await lyricsFinder(searchString, "");
+      if (!lyrics) msg.room.sendChatMessage(`No lyrics found for ${searchString}.`);
+
+      await sourcebin.create([
+        {
+        name: (searchString),
+            content: (lyrics),
+            languageId: ('txt')
+        }
+      ]).then(bin => msg.room.sendChatMessage((b) => b.text('The url to the lyrics is ').url(bin.url)))
+      return
+    } else if (!searchString) {
+
+      var lyrics = await lyricsFinder(queue[0].title, "");
+      if (!lyrics) msg.room.sendChatMessage(`No lyrics found for ${queue[0].title}.`);
+
+      await sourcebin.create([
+        {
+        name: (queue[0].title),
+            content: (lyrics),
+            languageId: ('txt')
+        }
+      ]).then(bin => msg.room.sendChatMessage((b) => b.text('The url to the lyrics is ').url(bin.url)))
+      return
+    }
+    
     return;
   }
   if (msg.content.startsWith(`${prefix}stats`)) {
@@ -348,7 +386,7 @@ bot.on('newChatMsg', async (msg) => {
     msg.room.audioConnection.player.dispatcher.pause();
     return;
   }
-  if (msg.content == `${prefix}resume`) {
+  if (msg.content.startsWith(`${prefix}resume`)) {
     if (!isPlayingMusic(msg.room)) {
       if (queue.length) {
         await msg.room.sendChatMessage((b) =>

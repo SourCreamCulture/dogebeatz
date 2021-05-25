@@ -16,4 +16,15 @@ module.exports = {
   ],
   // uuid for textdb.dev
   dbId: '',
+  // if you wanna create a room set to true or set to false to join a specific room
+  create: true,
+  // fill in this data for creating a room if the above option is set to true
+  roomconfig: {
+    name: 'Music to Chill to',
+    description: 'Powered by Code and Made by @SourCream, Contribute here: https://github.com/SourCreamCulture/dogebeatz',
+    privacy: 'public',
+  },
+  // if the above option is set to true ignore this
+  // if the above option is set to false add the room id you wanna join here
+  roomID: ''
 };

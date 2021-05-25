@@ -26,9 +26,13 @@
 
 -	Skip the current song in the queue.
 
-### `-loop <on | off> `
+### `-loop <on | off>`
 
 -	Toggle loop mode.
+
+### `-lyrics <song name | no query to get the current song>`
+
+-   Get the lyrics of the currently playing song or any song.
 
 ### `-play <url | query>`
 
